@@ -1,5 +1,5 @@
 import Navbar from "~/components/Navbar";
-import type { Route } from "./+types/home";
+import type { Route } from "./+types/Home";
 import { resumes } from "~/constants";
 import ResumeCard from "~/components/ResumeCard";
 import { usePuterStore } from "~/lib/puter";
