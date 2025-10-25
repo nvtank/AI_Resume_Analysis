@@ -3,6 +3,8 @@
  * @param {number} bytes - The file size in bytes.
  * @returns {string} - The formatted file size string.
  */
+
+
 export const formatSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
 
@@ -12,3 +14,5 @@ export const formatSize = (bytes: number): string => {
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
+
+export const generateUUID = () => crypto.randomUUID();
