@@ -15,7 +15,21 @@ const Upload = () => {
     setFile(file);
   }
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget.closest('form');
+    if (!form || !file) return;
+    const formdata = new FormData(form);
 
+    const companyName = formdata.get('company-name') as string;
+    const jobTitle = formdata.get('job-title') as string;
+    const jobDescription = formdata.get('job-description') as string;
+
+    console.log({
+        companyName,
+        jobTitle,
+        jobDescription,
+        file
+        });
   }
 
   return (
@@ -43,6 +57,10 @@ const Upload = () => {
                             <div className='form-div'>
                                 <label htmlFor="job-title">Job Title</label>
                                 <input type="text" id="job-title" placeholder="Job Title" name="job-title" required />
+                            </div>
+                             <div className='form-div'>
+                                <label htmlFor="job-description">Job Description</label>
+                                <textarea rows={4} id="job-description" placeholder="Job Description" name="job-description" required />
                             </div>
                             <div className='form-div'>
                                 <label htmlFor="uploader">Uploader</label>
