@@ -17,7 +17,7 @@ export default function Home() {
   const { auth} = usePuterStore();
   const navigate = useNavigate();
    
-      useEffect(() => {
+  useEffect(() => {
           if(!auth.isAuthenticated) navigate('/auth?next=/');
       }, [auth.isAuthenticated]);
   return (
@@ -32,11 +32,12 @@ export default function Home() {
 
     {resumes.length>0 && (
         <div className="resumes-section">
-      {resumes.map((resume) => (
-          <div>
-            <ResumeCard key={resume.id} resume={resume} />
-          </div>
-        ))}
+     {resumes.map((resume) => (
+        <div key={resume.id}>
+          <ResumeCard resume={resume} />
+        </div>
+      ))}
+
       </div>
     )}
       </section>

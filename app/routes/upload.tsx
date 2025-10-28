@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router';
 import FileUploader from '~/components/FileUploader';
 import Navbar from '~/components/Navbar'
 import { prepareInstructions } from '~/constants';
@@ -68,6 +69,7 @@ const Upload = () => {
     setStatusText('Redirecting to results page...');
 
     console.log('Feedback data:', data);
+    navigate(`/resume/${uuid}`);
 
 }
 
