@@ -1,18 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react'; // Thêm lại useState, useEffect, useRef
 import { Link, useLocation, useNavigate } from 'react-router';
 import { usePuterStore } from '~/lib/puter';
 
 const Navbar = () => {
-  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { auth, isLoading } = usePuterStore();
 
+  const [isHidden, setIsHidden] = useState(false);
+  const lastScrollY = useRef(0);
+
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Logic: Ẩn khi cuộn xuống (scrollY hiện tại > scrollY cũ)
+      // Và chỉ ẩn khi đã cuộn qua một ngưỡng (ví dụ: 100px)
+      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+        setIsHidden(true);
+      } else {
+        // Hiện khi cuộn lên
+        setIsHidden(false);
+      }
+
+      // Cập nhật vị trí cuộn cuối cùng
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []); // Chỉ chạy 1 lần khi mount
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -27,14 +47,16 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? 'bg-white/80 backdrop-blur-xl shadow-lg py-3'
-          : 'bg-transparent py-5'
-      }`}
+      className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 
+                 bg-white/80 backdrop-blur-xl shadow-lg rounded-full
+                 transition-all duration-300 ease-in-out
+                 ${
+                   isHidden
+                     ? '-translate-y-24 opacity-0 pointer-events-none'
+                     : 'translate-y-0 opacity-100'
+                 }`}
     >
-      <div className="max-w-7xl mx-auto px-3 flex items-center justify-between">
-
+      <div className="flex items-center justify-between px-5 py-2">
         <Link to="/" className="flex items-center gap-2 group">
           <h1 className="text-2xl scale-50 font-extrabold bg-clip-text text-transparent group-hover:tracking-wide transition-all">
             RESUMIND
@@ -74,14 +96,13 @@ const Navbar = () => {
             </Link>
           ) : (
             <div className="relative group">
-              <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-all shadow">
-               
-                <span className="font-semibold text-gray-800">
+              <button className="flex items-center gap-2 px-4 py-2 bg-gray-200 rounded-full duration-300 ease-in-out hover:bg-black transition-all shadow text-gray-800 hover:text-white transition-all duration-300 ease-in-out cursor-pointer">
+                <span className="font-semibold">
                   {auth.user?.username || 'User'}
                 </span>
               </button>
 
-              <div className="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg py-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300">
+              <div className="absolute right-0  w-40 bg-white rounded-xl shadow-lg py-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300">
                 <Link
                   to="/profile"
                   className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
@@ -91,7 +112,7 @@ const Navbar = () => {
 
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
+                  className="w-full text-left px-4 py-2 font-bold text-red-600 hover:bg-red-50"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Logging out...' : 'Logout'}

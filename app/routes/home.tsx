@@ -130,8 +130,7 @@ export default function Home() {
             </div>
           </div>
         )}
-
-        {/* Resumes Grid */}
+        
         {!loadingResume && resumes.length > 0 && (
           <div className="resumes-section">
             {resumes.map((resume, index) => (
