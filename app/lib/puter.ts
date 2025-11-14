@@ -46,6 +46,7 @@ interface PuterStore {
   isLoading: boolean;
   error: string | null;
   puterReady: boolean;
+  isAdmin: boolean;
   auth: {
     user: PuterUser | null;
     isAuthenticated: boolean;
@@ -129,6 +130,19 @@ export const usePuterStore = create<PuterStore>((set, get) => {
       const isSignedIn = await puter.auth.isSignedIn();
       if (isSignedIn) {
         const user = await puter.auth.getUser();
+
+        let userRole = "user"; // Mặc định là user
+        try {
+          // File wipe.tsx (File 9) xác nhận bạn đang dùng user.username
+          const role = await puter.kv.get(`user-role:${user.username}`);
+          if (role === 'admin') {
+            userRole = 'admin';
+          }
+        } catch (roleError) {
+          console.error("Không thể lấy user role:", roleError);
+        }
+        const isAdmin = (userRole === 'admin');
+
         set({
           auth: {
             user,
@@ -139,6 +153,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             checkAuthStatus: get().auth.checkAuthStatus,
             getUser: () => user,
           },
+          isAdmin: isAdmin, 
           isLoading: false,
         });
         return true;
@@ -153,6 +168,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             checkAuthStatus: get().auth.checkAuthStatus,
             getUser: () => null,
           },
+          isAdmin: false, // Reset khi không đăng nhập
           isLoading: false,
         });
         return false;
@@ -161,6 +177,8 @@ export const usePuterStore = create<PuterStore>((set, get) => {
       const msg =
         err instanceof Error ? err.message : "Failed to check auth status";
       setError(msg);
+      // Đảm bảo reset khi lỗi
+      set(state => ({ ...state, isAdmin: false, isLoading: false })); 
       return false;
     }
   };
@@ -204,6 +222,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
           checkAuthStatus: get().auth.checkAuthStatus,
           getUser: () => null,
         },
+        isAdmin: false,
         isLoading: false,
       });
     } catch (err) {
@@ -211,7 +230,6 @@ export const usePuterStore = create<PuterStore>((set, get) => {
       setError(msg);
     }
   };
-
   const refreshUser = async (): Promise<void> => {
     const puter = getPuter();
     if (!puter) {
@@ -415,6 +433,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
     isLoading: true,
     error: null,
     puterReady: false,
+    isAdmin: false,
     auth: {
       user: null,
       isAuthenticated: false,

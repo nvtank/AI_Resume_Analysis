@@ -1,8 +1,10 @@
 interface Job {
+  id: string; 
   title: string;
   description: string;
-  location: string;
-  requiredSkills: string[];
+  company: string;
+  // location?: string;
+  // requiredSkills?: string[];
 }
 
 interface Resume {
