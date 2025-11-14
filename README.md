@@ -1,40 +1,71 @@
-# Welcome to React Router!
+# 📄 AI Resume Analysis
 
-A modern, production-ready template for building full-stack React applications using React Router.
+An intelligent AI-powered resume analysis platform that helps job seekers optimize their CVs and match them with job descriptions using advanced AI technology.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+![React Router](https://img.shields.io/badge/React_Router-v7-CA4245?style=flat&logo=react-router&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat&logo=typescript&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.0-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
+![Puter.js](https://img.shields.io/badge/Puter.js-AI_Powered-purple?style=flat)
 
-## Features
+## ✨ Features
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+### 🤖 AI-Powered Analysis
+- **Resume Analysis**: Get comprehensive feedback on your CV including ATS compatibility, formatting, content quality, and suggestions for improvement
+- **Job Description Matching**: Match your resume against specific job descriptions to see how well you fit the role
+- **Claude AI Integration**: Powered by Claude 3.7 Sonnet for intelligent and context-aware analysis
 
-## Getting Started
+### 📊 Detailed Insights
+- **ATS Score**: Check how well your resume performs with Applicant Tracking Systems
+- **Match Percentage**: See how well your skills align with job requirements
+- **Keyword Analysis**: Identify missing keywords and skills
+- **Section-by-Section Feedback**: Get specific recommendations for each resume section
+
+### � User Management
+- **Authentication**: Secure login via Puter.js authentication
+- **Resume History**: Track all your analyzed resumes
+- **Admin Dashboard**: Manage job postings and user roles (admin only)
+
+### 🎨 Modern UI/UX
+- **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Smooth Animations**: Built with GSAP for fluid transitions
+- **Intuitive Interface**: Clean and user-friendly design
+- **PDF Upload**: Easy drag-and-drop resume upload
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm or yarn
+- Puter.js account (for AI features)
 
 ### Installation
 
-Install the dependencies:
+1. **Clone the repository**
+```bash
+git clone https://github.com/nvtank/AI_Resume_Analysis.git
+cd AI_Resume_Analysis
+```
 
+2. **Install dependencies**
 ```bash
 npm install
 ```
 
+3. **Set up environment variables**
+Create a `.env` file in the root directory (if needed for custom configuration)
+
 ### Development
 
-Start the development server with HMR:
+Start the development server with Hot Module Replacement:
 
 ```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+Your application will be available at `http://localhost:5173`
 
-## Building for Production
+### Building for Production
 
 Create a production build:
 
@@ -42,46 +73,152 @@ Create a production build:
 npm run build
 ```
 
-## Deployment
-
-### Docker Deployment
-
-To build and run using Docker:
+Start the production server:
 
 ```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
+npm start
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
+## 📁 Project Structure
 
 ```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+AI_Resume_Analysis/
+├── app/
+│   ├── components/          # Reusable UI components
+│   │   ├── Navbar.tsx      # Navigation bar
+│   │   ├── FileUploader.tsx # PDF upload component
+│   │   ├── ScoreGauge.tsx  # Score visualization
+│   │   └── ...
+│   ├── routes/             # Application routes
+│   │   ├── home.tsx        # Landing page
+│   │   ├── auth.tsx        # Authentication
+│   │   ├── analyze-cv.tsx  # General CV analysis
+│   │   ├── match-jd.tsx    # Job description matching
+│   │   ├── resume.tsx      # Results page
+│   │   └── admin/          # Admin routes
+│   ├── lib/                # Utility functions
+│   │   ├── puter.ts        # Puter.js integration
+│   │   ├── pdf2img.ts      # PDF to image conversion
+│   │   └── utils.ts        # Helper functions
+│   ├── constants/          # App constants
+│   └── types/              # TypeScript definitions
+├── public/                 # Static assets
+│   ├── icons/             # SVG icons
+│   └── images/            # Images and GIFs
+├── Dockerfile             # Docker configuration
+└── package.json           # Dependencies and scripts
 ```
 
-## Styling
+## 🛠️ Tech Stack
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+### Frontend
+- **React Router v7**: Modern full-stack React framework with SSR
+- **TypeScript**: Type-safe development
+- **TailwindCSS**: Utility-first CSS framework
+- **GSAP**: Professional-grade animation library
+- **PDF.js**: PDF rendering and processing
+
+### Backend & Services
+- **Puter.js**: Cloud platform for file storage, KV storage, and AI services
+- **Claude AI (3.7 Sonnet)**: Advanced language model for resume analysis
+
+## 📖 Usage Guide
+
+### For Job Seekers
+
+1. **Sign In**: Click "Login" and authenticate with Puter.js
+2. **Choose Analysis Type**:
+   - **Analyze CV**: Get general feedback on your resume
+   - **Match JD**: Compare your resume against a specific job description
+3. **Upload Resume**: Drag and drop your PDF resume
+4. **Get Results**: View detailed analysis, scores, and recommendations
+5. **Improve**: Follow suggestions to optimize your resume
+
+### For Admins
+
+1. **Get Admin Access**: Visit `/admin/make-admin` to grant yourself admin privileges
+2. **Manage Jobs**: Access `/admin/jobs` to add, edit, or remove job postings
+3. **View Analytics**: Monitor platform usage and user activity
+
+## 🐳 Docker Deployment
+
+Build the Docker image:
+
+```bash
+docker build -t ai-resume-analysis .
+```
+
+Run the container:
+
+```bash
+docker run -p 3000:3000 ai-resume-analysis
+```
+
+### Deploy to Cloud Platforms
+
+This application can be deployed to:
+- **AWS ECS / EC2**
+- **Google Cloud Run**
+- **Azure Container Apps**
+- **Digital Ocean App Platform**
+- **Fly.io**
+- **Railway**
+- **Vercel** (with Node.js runtime)
+
+## 🔑 Key Features Explained
+
+### ATS Compatibility Check
+The system analyzes your resume for:
+- Font usage and readability
+- Section organization
+- Keyword optimization
+- File format compatibility
+- Length and conciseness
+
+### Job Matching Algorithm
+Compares your resume against job descriptions by:
+- Extracting required skills and qualifications
+- Matching your experience with job requirements
+- Identifying skill gaps
+- Providing improvement suggestions
+
+### AI-Powered Recommendations
+Claude AI provides:
+- Specific, actionable feedback
+- Industry best practices
+- Personalized suggestions based on your field
+- Examples of strong bullet points
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 👥 Authors
+
+- **nvtank** - [GitHub Profile](https://github.com/nvtank)
+
+## 🙏 Acknowledgments
+
+- Built with [React Router](https://reactrouter.com/)
+- Powered by [Puter.js](https://puter.com/)
+- AI by [Anthropic Claude](https://www.anthropic.com/)
+- Icons from [Heroicons](https://heroicons.com/)
+- Animations by [GSAP](https://greensock.com/gsap/)
+
+## 📞 Support
+
+If you have any questions or need help, please:
+- Open an issue on GitHub
+- Contact the maintainers
 
 ---
-
-Built with ❤️ using React Router.
