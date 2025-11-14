@@ -10,7 +10,7 @@ const FileUploaderTyped = FileUploader as React.ComponentType<{
   onFileSelect: (file: File | null) => void
 }>;
 
-const Upload = () => {
+const MatchJD = () => {
   const {auth, isLoading, fs, ai, kv } = usePuterStore();
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -93,7 +93,7 @@ const Upload = () => {
         <Navbar />
         <section className='main-section'>
             <div className='page-heading py-16'>
-                <h1>Smart feedback for your dream job</h1>
+                <h1>Match your CV against a Job Description</h1>
                 {isProcessing ? (
                     <>
                         <h2>{statusText}</h2>
@@ -133,4 +133,4 @@ const Upload = () => {
   )
 }
 
-export default Upload
+export default MatchJD

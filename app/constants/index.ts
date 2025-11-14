@@ -93,7 +93,7 @@ export const resumes: Resume[] = [
 
 export const AIResponseFormat = `
       interface Feedback {
-      overallScore: number; //max 100
+      overallScore: number;
       ATS: {
         score: number; //rate based on ATS suitability
         tips: {
@@ -102,7 +102,7 @@ export const AIResponseFormat = `
         }[];
       };
       toneAndStyle: {
-        score: number; //max 100
+        score: number;
         tips: {
           type: "good" | "improve";
           tip: string; //make it a short "title" for the actual explanation
@@ -110,7 +110,7 @@ export const AIResponseFormat = `
         }[]; //give 3-4 tips
       };
       content: {
-        score: number; //max 100
+        score: number;
         tips: {
           type: "good" | "improve";
           tip: string; //make it a short "title" for the actual explanation
@@ -118,7 +118,7 @@ export const AIResponseFormat = `
         }[]; //give 3-4 tips
       };
       structure: {
-        score: number; //max 100
+        score: number;
         tips: {
           type: "good" | "improve";
           tip: string; //make it a short "title" for the actual explanation
@@ -126,7 +126,7 @@ export const AIResponseFormat = `
         }[]; //give 3-4 tips
       };
       skills: {
-        score: number; //max 100
+        score: number;
         tips: {
           type: "good" | "improve";
           tip: string; //make it a short "title" for the actual explanation
@@ -151,6 +151,16 @@ export const prepareInstructions = ({
   If provided, take the job description into consideration.
   The job title is: ${jobTitle}
   The job description is: ${jobDescription}
+  Provide the feedback using the following format: ${AIResponseFormat}
+  Return the analysis as a JSON object, without any other text and without the backticks.
+  Do not include any other text or comments.`;
+
+
+  export const prepareGeneralInstructions = () =>
+  `You are an expert in resume analysis.
+  Please analyze and rate this resume *generally*. Do not focus on any specific job.
+  Identify the user's strongest skills, experience level, and potential job titles.
+  Be thorough and detailed.
   Provide the feedback using the following format: ${AIResponseFormat}
   Return the analysis as a JSON object, without any other text and without the backticks.
   Do not include any other text or comments.`;

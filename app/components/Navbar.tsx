@@ -1,19 +1,108 @@
-import React from 'react'
-import { Link } from 'react-router'
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router';
+import { usePuterStore } from '~/lib/puter';
 
 const Navbar = () => {
-  return (
-    <nav className='navbar'>
-        <Link to="/">
-          <p className='text-2xl font-bold text-gradient'>RESUMIND</p>
-        </Link>
-        <Link to="/upload" className='primary-button w-fit'>
-          <p className='text-2xl font-bold text-white' >
-            Upload resume
-          </p>
-        </Link>
-    </nav>
-  )
-}
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { auth, isLoading } = usePuterStore();
 
-export default Navbar
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const isActive = (path: string) => location.pathname === path;
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      navigate('/auth');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+  return (
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? 'bg-white/80 backdrop-blur-xl shadow-lg py-3'
+          : 'bg-transparent py-5'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-3 flex items-center justify-between">
+
+        <Link to="/" className="flex items-center gap-2 group">
+          <h1 className="text-2xl scale-50 font-extrabold bg-clip-text text-transparent group-hover:tracking-wide transition-all">
+            RESUMIND
+          </h1>
+        </Link>
+        <div className="flex items-center gap-6">
+          <Link
+            to="/match-jd"
+            className={`relative font-semibold px-3 py-2 rounded-lg group transition-all ${
+              isActive('/match-jd')
+                ? 'text-purple-600'
+                : 'text-gray-700 hover:text-purple-600'
+            }`}
+          >
+            Match JD
+            <span className="absolute left-0 -bottom-0.5 h-0.5 w-0 bg-purple-600 transition-all duration-300 group-hover:w-full pointer-events-none"></span>
+          </Link>
+
+          <Link
+            to="/analyze-cv"
+            className={`relative font-semibold px-3 py-2 rounded-lg group transition-all ${
+              isActive('/analyze-cv')
+                ? 'text-blue-600'
+                : 'text-gray-700 hover:text-blue-600'
+            }`}
+          >
+            Analyze CV
+            <span className="absolute left-0 -bottom-0.5 h-0.5 w-0 bg-blue-600 transition-all duration-300 group-hover:w-full pointer-events-none"></span>
+          </Link>
+
+          {!auth.isAuthenticated ? (
+            <Link
+              to="/auth"
+              className="px-5 py-2 font-semibold rounded-full bg-black  text-white shadow-md hover:shadow-lg hover:scale-105 transition-all"
+            >
+              {isLoading ? 'Loading...' : 'Login'}
+            </Link>
+          ) : (
+            <div className="relative group">
+              <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-all shadow">
+               
+                <span className="font-semibold text-gray-800">
+                  {auth.user?.username || 'User'}
+                </span>
+              </button>
+
+              <div className="absolute right-0 mt-2 w-40 bg-white rounded-xl shadow-lg py-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300">
+                <Link
+                  to="/profile"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                >
+                  Profile
+                </Link>
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Logging out...' : 'Logout'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;

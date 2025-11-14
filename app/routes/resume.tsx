@@ -1,3 +1,5 @@
+// routes/resume.tsx
+
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router';
 import ATS from '~/components/ATS';
@@ -5,29 +7,37 @@ import Summary from '~/components/Summary';
 import Details from '~/components/Details';
 import { usePuterStore } from '~/lib/puter';
 
+// (Không cần import Job, Resume, Feedback vì chúng đã ở file index.d.ts)
 
 export const meta = () => ([
     { title: "Resumind - Review" },
     { name: "description", content: "Detailed overview of your resume" },
 ])
 
-const resume = () => {
+const Resume = () => {
+  // Lấy 'ai' từ store để dùng cho tính năng gợi ý
   const { auth, isLoading, fs, kv, ai } = usePuterStore();
   const { id } = useParams();
   const [ imageUrl, setImageUrl ] = useState<string | null>(null);
   const [ resumeUrl, setResumeUrl ] = useState<string | null>(null);
-
   const [ feedback, setFeedback ] = useState<Feedback | null>(null);
+  
+  // State mới để lưu toàn bộ dữ liệu resume (bao gồm cả jobTitle nếu có)
+  const [ resumeData, setResumeData ] = useState<Resume | null>(null); 
+  
   const navigate = useNavigate();
  
-
+  // State cho tính năng gợi ý Job
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [suggestedJobs, setSuggestedJobs] = useState<Job[]>([]);
 
+  // useEffect để kiểm tra xác thực
   useEffect(() => {
-          if(!isLoading && !auth.isAuthenticated) navigate(`/auth?next=/resume${id}`);
-  }, [isLoading]);
+    if(!isLoading && !auth.isAuthenticated) navigate(`/auth?next=/resume${id}`);
+  }, [isLoading, auth.isAuthenticated, navigate]);
 
+
+  // useEffect để tải dữ liệu resume
   useEffect(() => {
     const loadResume = async () => {
       console.log('📖 Loading resume with ID:', id);
@@ -40,8 +50,12 @@ const resume = () => {
         return;
       }
 
-      const data = JSON.parse(resume);
+      // Dùng kiểu 'Resume' global
+      const data = JSON.parse(resume) as Resume; 
       console.log('✅ Parsed resume data:', data);
+
+      // Lưu toàn bộ data vào state
+      setResumeData(data); 
 
       const resumeBlob = await fs.read(data.resumePath);
       if(!resumeBlob) {
@@ -72,9 +86,10 @@ const resume = () => {
   }, [id, kv, fs]);
  
 
+  // Hàm để xử lý gợi ý việc làm
   const handleSuggestJobs = async () => {
     if (!feedback) {
-      alert("Data feedback not available yet.");
+      alert("Dữ liệu feedback CV chưa sẵn sàng.");
       return;
     }
     
@@ -82,62 +97,61 @@ const resume = () => {
     setSuggestedJobs([]);
 
     try {
-      // get all jobs from KV
+      // 1. Lấy tất cả jobs từ KV
       const jobItems = (await kv.list("job:*", true)) as KVItem[];
       if (!jobItems || jobItems.length === 0) {
-        alert("No jobs available in the system.");
+        alert("Hiện chưa có job nào trong hệ thống.");
         setIsSuggesting(false);
         return;
       }
       
+      // 'Job' là kiểu global từ index.d.ts
       const allJobs = jobItems.map(({ key, value }): Job => {
         const id = key.split(":")[1];
         return { id, ...JSON.parse(value) };
       });
 
-      // prompt construction
-      const cvSummary = ((feedback as any)?.summary?.overall) || ((feedback as any)?.overall) || ((feedback as any)?.summaryText) || "No summary";
-      const cvSkills = (feedback.skills?.tips?.map((tip: any) => tip.tip).join(', ')) || "No skills";
-
+      // 2. Chuẩn bị prompt cho AI
+      const cvSummary = feedback.summary?.overall || "Không có tóm tắt";
+      const cvSkills = feedback.skills.tips.map(tip => tip.tip).join(', ') || "Không có kỹ năng";
+      
       const prompt = `
-        You are an AI recruiting expert.
-        Here is the summary and skills of a candidate:
+        Bạn là một chuyên gia tuyển dụng AI.
+        Dưới đây là tóm tắt và kỹ năng của một ứng viên:
         ---CV---
-        Summary: ${cvSummary}
-        Skills: ${cvSkills}
+        Tóm tắt: ${cvSummary}
+        Kỹ năng: ${cvSkills}
         ---
 
-        Here is the list of available job openings:
+        Đây là danh sách các công việc đang tuyển dụng:
         ---JOBS---
         ${JSON.stringify(allJobs)}
         ---
 
-        Based on the candidate's CV, please find the 3 most suitable job openings.
-        Please respond with a JSON array containing only the IDs of those 3 jobs.
-        For example: ["job-id-1", "job-id-2", "job-id-3"]
+        Dựa trên CV của ứng viên, hãy tìm 3 công việc (Jobs) phù hợp nhất.
+        Hãy trả lời bằng một mảng JSON CHỈ chứa ID của 3 job đó.
+        Ví dụ: ["job-id-1", "job-id-2", "job-id-3"]
       `;
 
+      // 3. Gọi AI
       const response = await ai.chat(prompt);
-      if (!response) {
-        throw new Error("AI not responding");
-      }
       const content = typeof response.message.content === 'string' 
         ? response.message.content 
         : response.message.content[0]?.text || '';
 
-      // result parsing
+      // 4. Xử lý kết quả
       const jsonMatch = content.match(/\[.*?\]/);
       if (jsonMatch) {
         const suggestedIds = JSON.parse(jsonMatch[0]) as string[];
         const matchedJobs = allJobs.filter(job => suggestedIds.includes(job.id));
         setSuggestedJobs(matchedJobs);
       } else {
-        throw new Error("AI not returning valid JSON format: " + content);
+        throw new Error("AI không trả về định dạng JSON hợp lệ: " + content);
       }
 
     } catch (err) {
       console.error(err);
-      alert("Error suggesting jobs: " + (err as Error).message);
+      alert("Lỗi khi gợi ý việc làm: " + (err as Error).message);
     } finally {
       setIsSuggesting(false);
     }
@@ -158,36 +172,38 @@ const resume = () => {
             <section className="feedback-section bg-[url('/images/bg-small.svg')] bg-cover min-h-screen p-8 w-full lg:w-2/3">
                 <h2 className='text-4xl font-bold text-gray-800 mb-8'>Resume Analysis</h2>
 
-                {/* === KHỐI GỢI Ý JOB MỚI === */}
-                <div className="my-8 p-4 bg-white rounded-lg shadow-md border border-gray-200 animate-in fade-in duration-700">
-                  <h3 className="text-2xl font-bold text-gray-800 mb-4">Gợi ý Việc làm</h3>
-                  <button 
-                    onClick={handleSuggestJobs} 
-                    disabled={isSuggesting || !feedback} // Disable khi đang
-                    className="primary-button disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isSuggesting ? "Đang tìm kiếm..." : "Tìm việc làm phù hợp"}
-                  </button>
-                  
-                  {isSuggesting && (
-                    <p className="text-gray-600 mt-4">Đang phân tích CV và Job, vui lòng đợi...</p>
-                  )}
+                {/* === LOGIC ĐIỀU KIỆN CHO NÚT GỢI Ý JOB === */}
+                {/* Chỉ hiển thị nếu đây là CV tổng quát (không có jobTitle) */}
+                {!resumeData?.jobTitle && (
+                  <div className="my-8 p-4 bg-white rounded-lg shadow-md border border-gray-200 animate-in fade-in duration-700">
+                    <h3 className="text-2xl font-bold text-gray-800 mb-4">Gợi ý Việc làm</h3>
+                    <button 
+                      onClick={handleSuggestJobs} 
+                      disabled={isSuggesting || !feedback}
+                      className="primary-button disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSuggesting ? "Đang tìm kiếm..." : "Tìm việc làm phù hợp"}
+                    </button>
+                    
+                    {isSuggesting && (
+                      <p className="text-gray-600 mt-4">Đang phân tích CV và Job, vui lòng đợi...</p>
+                    )}
 
-                  {suggestedJobs.length > 0 && (
-                    <div className="mt-4 space-y-2">
-                      <h4 className="font-semibold">Kết quả phù hợp nhất:</h4>
-                      {/* 'job' có kiểu 'Job' global */}
-                      {suggestedJobs.map(job => (
-                        <div key={job.id} className="p-3 bg-gray-50 rounded border border-gray-200">
-                          <p className="font-bold text-blue-600">{job.title}</p>
-                          <p className="text-sm text-gray-700">{job.company}</p>
-                          <p className="text-sm text-gray-500 mt-1 line-clamp-2">{job.description}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                {/* === KẾT THÚC KHỐI GỢI Ý JOB === */}
+                    {suggestedJobs.length > 0 && (
+                      <div className="mt-4 space-y-2">
+                        <h4 className="font-semibold">Kết quả phù hợp nhất:</h4>
+                        {suggestedJobs.map(job => (
+                          <div key={job.id} className="p-3 bg-gray-50 rounded border border-gray-200">
+                            <p className="font-bold text-blue-600">{job.title}</p>
+                            <p className="text-sm text-gray-700">{job.company}</p>
+                            <p className="text-sm text-gray-500 mt-1 line-clamp-2">{job.description}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                {/* === KẾT THÚC LOGIC ĐIỀU KIỆN === */}
 
 
                 {feedback ? 
@@ -206,6 +222,16 @@ const resume = () => {
 
             {/* Resume Preview Section */}
             <aside className="w-full lg:w-1/3 bg-gray-100 p-8 sticky top-0 h-screen overflow-y-auto">
+              
+              {/* === HIỂN THỊ THÔNG TIN JOB NẾU CÓ === */}
+              {resumeData?.jobTitle && (
+                <div className='mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg'>
+                  <p className='text-sm font-semibold text-blue-800'>Phân tích so khớp cho Job:</p>
+                  <p className='text-lg font-bold text-blue-900'>{resumeData.jobTitle}</p>
+                </div>
+              )}
+              {/* === KẾT THÚC KHỐI THÔNG TIN === */}
+
               <h3 className="text-2xl font-bold text-gray-800 mb-4">Resume Preview</h3>
               {imageUrl ? (
                 <div className="gradient-border animate-in fade-in duration-1000">
@@ -237,4 +263,4 @@ const resume = () => {
   )
 }
 
-export default resume
+export default Resume
