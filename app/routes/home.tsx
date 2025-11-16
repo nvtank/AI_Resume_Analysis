@@ -1,4 +1,3 @@
-import Navbar from "~/components/Navbar";
 import type { Route } from "./+types/Home";
 import ResumeCard from "~/components/ResumeCard";
 import { usePuterStore } from "~/lib/puter";
@@ -75,8 +74,6 @@ export default function Home() {
 
   return (
     <main className="bg-[url('/images/bg-main.svg')] bg-cover min-h-screen">
-      <Navbar />
-
       <section className="main-section">
         <div className="page-heading py-16">
           <h1 className="animate-in fade-in slide-in-from-bottom-4 duration-700">Welcome to Resumind</h1>

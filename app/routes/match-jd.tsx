@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router';
 import FileUploader from '~/components/FileUploader';
-import Navbar from '~/components/Navbar'
 import { prepareInstructions } from '~/constants';
 import { convertPdfToImage } from '~/lib/pdf2img';
 import { usePuterStore } from '~/lib/puter';
@@ -90,7 +89,6 @@ const MatchJD = () => {
 
   return (
     <main className='bg-[url("/images/bg-main.svg")] bg-cover'>
-        <Navbar />
         <section className='main-section'>
             <div className='page-heading py-16'>
                 <h1>Match your CV against a Job Description</h1>

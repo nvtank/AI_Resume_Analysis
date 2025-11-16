@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router";
-import Navbar from "~/components/Navbar"; 
 import { usePuterStore } from "~/lib/puter";
 import { generateUUID } from "~/lib/utils";
 import gsap from "gsap";
@@ -182,7 +181,6 @@ export default function AdminJobs() {
   if (isLoading) {
     return (
       <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-        <Navbar />
         <div className="pt-32 pb-16 text-center">
           <div className="flex justify-center items-center gap-3">
             <div className="w-6 h-6 border-2 border-gray-800 border-t-transparent rounded-full animate-spin"></div>
@@ -196,7 +194,6 @@ export default function AdminJobs() {
   if (!isAdmin) {
     return (
       <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-        <Navbar />
         <div className="pt-32 pb-16 text-center">
           <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-auto border border-gray-200">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -214,8 +211,6 @@ export default function AdminJobs() {
 
   return (
     <main ref={pageRef} className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <Navbar />
-      
       <section className="main-section pt-24 pb-16">
         <div className="container mx-auto px-4 max-w-6xl">
           {/* Page Header */}
