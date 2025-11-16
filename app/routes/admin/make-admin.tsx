@@ -114,7 +114,6 @@ export default function MakeMeAdmin() {
           Admin Access
         </h1>
 
-        {/* Content */}
         <div ref={contentRef} className="text-center mb-8">
           <p className="text-gray-600 mb-4 leading-relaxed">
             Request administrator privileges to access advanced features and management tools.
@@ -125,7 +124,6 @@ export default function MakeMeAdmin() {
           </div>
         </div>
 
-        {/* Features List */}
         <div className="mb-8 space-y-3">
           <div className="flex items-center gap-3 text-sm text-gray-600">
             <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -147,7 +145,6 @@ export default function MakeMeAdmin() {
           </div>
         </div>
 
-        {/* Button */}
         <button 
           ref={buttonRef}
           onClick={handleMakeAdmin}
@@ -166,7 +163,6 @@ export default function MakeMeAdmin() {
           )}
         </button>
 
-        {/* Footer Note */}
         <div className="mt-6 text-center">
           <p className="text-xs text-gray-500">
             Administrator privileges will be granted immediately upon confirmation.
