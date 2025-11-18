@@ -14,16 +14,12 @@ const Navbar = () => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Logic: Ẩn khi cuộn xuống (scrollY hiện tại > scrollY cũ)
-      // Và chỉ ẩn khi đã cuộn qua một ngưỡng (ví dụ: 100px)
       if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
         setIsHidden(true);
       } else {
-        // Hiện khi cuộn lên
         setIsHidden(false);
       }
 
-      // Cập nhật vị trí cuộn cuối cùng
       lastScrollY.current = currentScrollY;
     };
 
@@ -32,8 +28,8 @@ const Navbar = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []); // Chỉ chạy 1 lần khi mount
-
+  }, []); 
+  
   const isActive = (path: string) => location.pathname === path;
 
   const handleLogout = async () => {

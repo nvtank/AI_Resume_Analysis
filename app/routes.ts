@@ -8,7 +8,7 @@ export default [
     
     route('/analyze-cv', 'routes/analyze-cv.tsx'),
 
-
+    route('/profile', 'routes/profile.tsx'),
     route('/resume/:id', 'routes/resume.tsx'),
     route('/wipe', 'routes/wipe.tsx'),
     route('/admin/jobs', 'routes/admin/jobs.tsx'),
