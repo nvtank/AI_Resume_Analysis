@@ -88,47 +88,118 @@ const MatchJD = () => {
   }
 
   return (
-    <main className='bg-[url("/images/bg-main.svg")] bg-cover'>
-        <section className='main-section'>
-            <div className='page-heading py-16'>
-                <h1>Match your CV against a Job Description</h1>
-                {isProcessing ? (
-                    <>
-                        <h2>{statusText}</h2>
-                        <img src="/images/resume-scan.gif" className="w-full"/>
-                    </>
-                    ) : (
-                        <h2>
-                            Drop your resume here to get started!
-                        </h2>
-                    )}
-                    {!isProcessing && (
-                        <form id="upload-form" onSubmit={handleSubmit} className="flex flex-col gap-4 mt-8">
-                            <div className='form-div'>
-                                <label htmlFor="company-name">Company Name</label>
-                                <input type="text" id="company-name" placeholder="company Name" name="company-name" required />
-                            </div>
-                            <div className='form-div'>
-                                <label htmlFor="job-title">Job Title</label>
-                                <input type="text" id="job-title" placeholder="Job Title" name="job-title" required />
-                            </div>
-                             <div className='form-div'>
-                                <label htmlFor="job-description">Job Description</label>
-                                <textarea rows={4} id="job-description" placeholder="Job Description" name="job-description" required />
-                            </div>
-                            <div className='form-div'>
-                                <label htmlFor="uploader">Uploader</label>
-                                <FileUploaderTyped onFileSelect={handleFileSelect} />
-                            </div>
-                            <button className='primary-button' type="submit">
-                                Analyze Resume
-                            </button>
-                        </form>
-                    )}
+  <main className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    
+    <section className="max-w-4xl mx-auto px-6 py-20">
+
+      <div className="text-center mb-16">
+        <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">
+          Match Your CV With a Job Description
+        </h1>
+        <p className="text-gray-600 mt-3 text-lg">
+          Upload your resume and compare it instantly with any job description.
+        </p>
+      </div>
+
+      {isProcessing ? (
+        <div className="bg-white/70 backdrop-blur-xl border border-gray-200 shadow-lg rounded-3xl p-12 text-center space-y-6">
+          <h2 className="text-2xl font-semibold text-gray-800">
+            {statusText}
+          </h2>
+
+          <img
+            src="/images/resume-scan.gif"
+            className="w-72 mx-auto opacity-90"
+          />
+
+          <p className="text-sm text-gray-500">
+            Please wait a moment while we analyze your resume...
+          </p>
+        </div>
+      ) : (
+
+        <form
+          id="upload-form"
+          onSubmit={handleSubmit}
+          className="bg-white/70 backdrop-blur-lg border border-gray-200 shadow-lg rounded-3xl p-10 space-y-8"
+        >
+
+          <div className='w-full'>
+            <label
+              htmlFor="company-name"
+              className="block font-medium text-gray-800 mb-1"
+            >
+              Company Name
+            </label>
+            <input
+              type="text"
+              name="company-name"
+              id="company-name"
+              placeholder="e.g. Google"
+              required
+              className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-300 focus:border-black focus:ring-1 focus:ring-black transition"
+            />
+          </div>
+
+          <div className='w-full'>
+            <label
+              htmlFor="job-title"
+              className="block font-medium text-gray-800 mb-1"
+            >
+              Job Title
+            </label>
+            <input
+              type="text"
+              name="job-title"
+              id="job-title"
+              placeholder="e.g. Frontend Engineer"
+              required
+              className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-300 focus:border-black focus:ring-1 focus:ring-black transition"
+            />
+          </div>
+
+          <div className='w-full'>
+            <label
+              htmlFor="job-description"
+              className="block font-medium text-gray-800 mb-1"
+            >
+              Job Description
+            </label>
+            <textarea
+              id="job-description"
+              name="job-description"
+              rows={5}
+              placeholder="Paste the job description here..."
+              required
+              className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-300 resize-none 
+              focus:border-black focus:ring-1 focus:ring-black transition"
+            />
+          </div>
+
+          <div className='w-full'>
+            <label className="block font-medium text-gray-800 mb-2">
+              Resume Upload
+            </label>
+
+            <div className="bg-gray-50 border text-center border-gray-300 rounded-xl p-5">
+              <FileUploaderTyped onFileSelect={handleFileSelect} />
             </div>
-        </section>
-    </main>
-  )
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-4 bg-black text-white rounded-xl font-semibold text-lg
+            hover:bg-gray-900 transition active:scale-[0.98]"
+          >
+            Analyze Resume
+          </button>
+
+        </form>
+      )}
+
+    </section>
+  </main>
+);
 }
 
 export default MatchJD

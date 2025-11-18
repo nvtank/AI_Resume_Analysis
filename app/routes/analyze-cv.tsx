@@ -76,37 +76,66 @@ const AnalyzeCV = () => {
     handleAnalyze({file}); // Chỉ cần gửi file
   }
 
-  return (
-    <main className='bg-[url("/images/bg-main.svg")] bg-cover'>
-        <section className='main-section'>
-            <div className='page-heading py-16'>
-                <h1>Get a General Analysis of Your CV</h1>
-                {isProcessing ? (
-                    <>
-                        <h2>{statusText}</h2>
-                        <img src="/images/resume-scan.gif" className="w-full"/>
-                    </>
-                    ) : (
-                        <h2>
-                            Drop your resume here to get started!
-                        </h2>
-                    )}
-                    {!isProcessing && (
-                        // Form chỉ có 1 file uploader
-                        <form id="upload-form" onSubmit={handleSubmit} className="flex flex-col gap-4 mt-8">
-                            <div className='form-div'>
-                                <label htmlFor="uploader">Uploader</label>
-                                <FileUploaderTyped onFileSelect={handleFileSelect} />
-                            </div>
-                            <button className='primary-button' type="submit">
-                                Analyze My CV
-                            </button>
-                        </form>
-                    )}
-            </div>
-        </section>
-    </main>
-  )
-}
+ return (
+  <main className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <section className="max-w-3xl mx-auto px-6 py-20">
 
+      {/* Heading */}
+      <div className="text-center mb-16">
+        <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">
+          Get a General Analysis of Your CV
+        </h1>
+        <p className="text-gray-600 mt-3 text-lg">
+          Upload your resume to receive an AI-powered review and improvement suggestions.
+        </p>
+      </div>
+
+      {/* Processing State */}
+      {isProcessing ? (
+        <div className="bg-white/70 backdrop-blur-xl border border-gray-200 shadow-lg rounded-3xl p-12 text-center space-y-6">
+          <h2 className="text-2xl font-semibold text-gray-800">
+            {statusText}
+          </h2>
+
+          <img
+            src="/images/resume-scan.gif"
+            className="w-72 mx-auto opacity-90"
+          />
+
+          <p className="text-sm text-gray-500">
+            Please wait while we process your CV...
+          </p>
+        </div>
+
+      ) : (
+
+        // Upload Form (Single Field)
+        <form
+          id="upload-form"
+          onSubmit={handleSubmit}
+          className="bg-white/70 backdrop-blur-lg border border-gray-200 shadow-lg rounded-3xl p-10 space-y-8"
+        >
+          <div className="w-full">
+            <label className="block font-medium text-gray-800 mb-2">
+              Upload Your CV
+            </label>
+
+            <div className="bg-gray-50 text-center border border-gray-300 rounded-xl p-5">
+              <FileUploaderTyped onFileSelect={handleFileSelect} />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-4 bg-black text-white rounded-xl font-semibold text-lg
+            hover:bg-gray-900 transition active:scale-[0.98]"
+          >
+            Analyze My CV
+          </button>
+        </form>
+      )}
+    </section>
+  </main>
+);
+}
 export default AnalyzeCV
