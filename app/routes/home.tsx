@@ -73,13 +73,12 @@ export default function Home() {
   };
 
   return (
-    <main className="bg-[url('/images/bg-main.svg')] bg-cover min-h-screen">
+    <main className="bg-cover min-h-screen mb-12">
       <section className="main-section">
         <div className="page-heading py-16">
           <h1 className="animate-in fade-in slide-in-from-bottom-4 duration-700">Welcome to Resumind</h1>
           <h2 className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">Your AI-powered resume analysis tool</h2>
           
-          {/* Stats Section */}
           {!loadingResume && resumes.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
               <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-200">
@@ -98,7 +97,6 @@ export default function Home() {
           )}
         </div>
 
-        {/* Loading State */}
         {loadingResume && (
           <div className="resumes-section">
             {[1, 2, 3].map((i) => (
@@ -109,7 +107,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Empty State */}
         {!loadingResume && resumes.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 animate-in fade-in duration-700">
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-12 shadow-xl border border-gray-200 text-center max-w-md">
