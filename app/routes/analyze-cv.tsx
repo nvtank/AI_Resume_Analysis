@@ -80,7 +80,6 @@ const AnalyzeCV = () => {
   <main className="min-h-screen bg-gradient-to-b from-white to-gray-50">
     <section className="max-w-3xl mx-auto px-6 py-20">
 
-      {/* Heading */}
       <div className="text-center mb-16">
         <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">
           Get a General Analysis of Your CV
@@ -90,7 +89,6 @@ const AnalyzeCV = () => {
         </p>
       </div>
 
-      {/* Processing State */}
       {isProcessing ? (
         <div className="bg-white/70 backdrop-blur-xl border border-gray-200 shadow-lg rounded-3xl p-12 text-center space-y-6">
           <h2 className="text-2xl font-semibold text-gray-800">
@@ -109,7 +107,6 @@ const AnalyzeCV = () => {
 
       ) : (
 
-        // Upload Form (Single Field)
         <form
           id="upload-form"
           onSubmit={handleSubmit}
