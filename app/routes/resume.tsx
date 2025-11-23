@@ -6,6 +6,7 @@ import ATS from '~/components/ATS';
 import Summary from '~/components/Summary';
 import Details from '~/components/Details';
 import { usePuterStore } from '~/lib/puter';
+import { fetchJobs, type ExternalJob } from '~/lib/jobs-api';
 
 // (Không cần import Job, Resume, Feedback vì chúng đã ở file index.d.ts)
 
@@ -27,9 +28,9 @@ const Resume = () => {
   
   const navigate = useNavigate();
  
-  // State cho tính năng gợi ý Job
+  // State cho tính năng gợi ý Job từ RapidAPI
   const [isSuggesting, setIsSuggesting] = useState(false);
-  const [suggestedJobs, setSuggestedJobs] = useState<Job[]>([]);
+  const [suggestedJobs, setSuggestedJobs] = useState<ExternalJob[]>([]);
 
   // useEffect để kiểm tra xác thực
   useEffect(() => {
@@ -86,7 +87,7 @@ const Resume = () => {
   }, [id, kv, fs]);
  
 
-  // Hàm để xử lý gợi ý việc làm
+  // Hàm để xử lý gợi ý việc làm từ RapidAPI
   const handleSuggestJobs = async () => {
     if (!feedback) {
       alert("Dữ liệu feedback CV chưa sẵn sàng.");
@@ -97,56 +98,59 @@ const Resume = () => {
     setSuggestedJobs([]);
 
     try {
-      // 1. Lấy tất cả jobs từ KV
-      const jobItems = (await kv.list("job:*", true)) as KVItem[];
-      if (!jobItems || jobItems.length === 0) {
-        alert("Hiện chưa có job nào trong hệ thống.");
+      // 1. Tạo query từ CV
+      const cvSkills = feedback.skills?.tips?.map(tip => tip.tip).join(', ') || "Không có kỹ năng";
+      
+      // Tạo query tìm kiếm dựa trên CV (lấy skill đầu tiên)
+      const firstSkill = cvSkills.split(',')[0]?.trim() || 'software';
+      const searchQuery = `${firstSkill} developer`.trim();
+      
+      // 2. Gọi API để lấy jobs thật từ RapidAPI
+      const allJobs = await fetchJobs(searchQuery);
+      
+      if (!allJobs || allJobs.length === 0) {
+        alert("Không tìm thấy job phù hợp từ RapidAPI.");
         setIsSuggesting(false);
         return;
       }
-      
-      // 'Job' là kiểu global từ index.d.ts
-      const allJobs = jobItems.map(({ key, value }): Job => {
-        const id = key.split(":")[1];
-        return { id, ...JSON.parse(value) };
-      });
 
-      // 2. Chuẩn bị prompt cho AI
-      const cvSummary = feedback.summary?.overall || "Không có tóm tắt";
-      const cvSkills = feedback.skills.tips.map(tip => tip.tip).join(', ') || "Không có kỹ năng";
-      
+      // 3. Dùng AI để chọn top 3 jobs phù hợp nhất
       const prompt = `
         Bạn là một chuyên gia tuyển dụng AI.
-        Dưới đây là tóm tắt và kỹ năng của một ứng viên:
-        ---CV---
-        Tóm tắt: ${cvSummary}
-        Kỹ năng: ${cvSkills}
+        Dưới đây là kỹ năng của một ứng viên:
+        ---CV SKILLS---
+        ${cvSkills}
         ---
 
-        Đây là danh sách các công việc đang tuyển dụng:
+        Đây là danh sách các việc làm thật:
         ---JOBS---
-        ${JSON.stringify(allJobs)}
+        ${JSON.stringify(allJobs.slice(0, 10))}
         ---
 
-        Dựa trên CV của ứng viên, hãy tìm 3 công việc (Jobs) phù hợp nhất.
-        Hãy trả lời bằng một mảng JSON CHỈ chứa ID của 3 job đó.
+        Dựa trên kỹ năng của ứng viên, hãy chọn 3 công việc phù hợp nhất.
+        Trả về MỘT MẢNG JSON chỉ chứa ID của 3 job đó.
         Ví dụ: ["job-id-1", "job-id-2", "job-id-3"]
       `;
 
-      // 3. Gọi AI
+      // 4. Gọi AI
       const response = await ai.chat(prompt);
+      if (!response) {
+        throw new Error("AI không trả về phản hồi");
+      }
+      
       const content = typeof response.message.content === 'string' 
         ? response.message.content 
         : response.message.content[0]?.text || '';
 
-      // 4. Xử lý kết quả
+      // 5. Xử lý kết quả
       const jsonMatch = content.match(/\[.*?\]/);
       if (jsonMatch) {
         const suggestedIds = JSON.parse(jsonMatch[0]) as string[];
         const matchedJobs = allJobs.filter(job => suggestedIds.includes(job.id));
-        setSuggestedJobs(matchedJobs);
+        setSuggestedJobs(matchedJobs.slice(0, 3));
       } else {
-        throw new Error("AI không trả về định dạng JSON hợp lệ: " + content);
+        // Nếu AI không trả về đúng format, lấy 3 job đầu tiên
+        setSuggestedJobs(allJobs.slice(0, 3));
       }
 
     } catch (err) {
@@ -190,13 +194,44 @@ const Resume = () => {
                     )}
 
                     {suggestedJobs.length > 0 && (
-                      <div className="mt-4 space-y-2">
-                        <h4 className="font-semibold">Kết quả phù hợp nhất:</h4>
+                      <div className="mt-4 space-y-3">
+                        <h4 className="font-semibold text-lg">Kết quả phù hợp nhất:</h4>
                         {suggestedJobs.map(job => (
-                          <div key={job.id} className="p-3 bg-gray-50 rounded border border-gray-200">
-                            <p className="font-bold text-blue-600">{job.title}</p>
-                            <p className="text-sm text-gray-700">{job.company}</p>
-                            <p className="text-sm text-gray-500 mt-1 line-clamp-2">{job.description}</p>
+                          <div key={job.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition">
+                            <div className="flex justify-between items-start mb-2">
+                              <p className="font-bold text-blue-600 text-lg">{job.title}</p>
+                              {job.employmentType && (
+                                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                                  {job.employmentType}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-700 font-medium">{job.company}</p>
+                            {job.location && (
+                              <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                {job.location}
+                              </p>
+                            )}
+                            {job.description && (
+                              <p className="text-sm text-gray-600 mt-2 line-clamp-2">{job.description}</p>
+                            )}
+                            {job.url && (
+                              <a 
+                                href={job.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700"
+                              >
+                                Xem chi tiết & Apply
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                              </a>
+                            )}
                           </div>
                         ))}
                       </div>

@@ -10,8 +10,10 @@ export default [
 
     route('/profile', 'routes/profile.tsx'),
     route('/resume/:id', 'routes/resume.tsx'),
+    route('/jobs', 'routes/jobs.tsx'),
     route('/wipe', 'routes/wipe.tsx'),
     route('/admin/jobs', 'routes/admin/jobs.tsx'),
     route('/admin/make-admin', 'routes/admin/make-admin.tsx'),
+    route('/api/jobs', 'routes/api.jobs.tsx'),
 ] satisfies RouteConfig;
  
