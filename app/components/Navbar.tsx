@@ -60,6 +60,18 @@ const Navbar = () => {
         </Link>
         <div className="flex items-center gap-6">
           <Link
+            to="/jobs"
+            className={`relative font-semibold px-3 py-2 rounded-lg group transition-all ${
+              isActive('/jobs')
+                ? 'text-green-600'
+                : 'text-gray-700 hover:text-green-600'
+            }`}
+          >
+            Jobs
+            <span className="absolute left-0 -bottom-0.5 h-0.5 w-0 bg-green-600 transition-all duration-300 group-hover:w-full pointer-events-none"></span>
+          </Link>
+
+          <Link
             to="/match-jd"
             className={`relative font-semibold px-3 py-2 rounded-lg group transition-all ${
               isActive('/match-jd')
