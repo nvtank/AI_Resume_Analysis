@@ -1,14 +1,15 @@
-// routes/resume.tsx
-
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router';
 import ATS from '~/components/ATS';
 import Summary from '~/components/Summary';
 import Details from '~/components/Details';
+import CoverLetterGenerator from '~/components/CoverLetterGenerator';
+import GeneralCoverLetterGenerator from '~/components/GeneralCoverLetterGenerator';
+import ResumeChat from '~/components/ResumeChat';
+import JobMatchAnalysis from '~/components/JobMatchAnalysis';
+import CandidateInfoCard from '~/components/CandidateInfoCard';
 import { usePuterStore } from '~/lib/puter';
 import { fetchJobs, type ExternalJob } from '~/lib/jobs-api';
-
-// (Không cần import Job, Resume, Feedback vì chúng đã ở file index.d.ts)
 
 export const meta = () => ([
     { title: "Resumind - Review" },
@@ -31,6 +32,9 @@ const Resume = () => {
   // State cho tính năng gợi ý Job từ RapidAPI
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [suggestedJobs, setSuggestedJobs] = useState<ExternalJob[]>([]);
+
+  // State cho tính năng Resume Text (để chat)
+  const [resumeText, setResumeText] = useState<string>('');
 
   // useEffect để kiểm tra xác thực
   useEffect(() => {
@@ -79,12 +83,26 @@ const Resume = () => {
 
       console.log('💬 Setting feedback:', data.feedback);
       setFeedback(data.feedback);
+
+      // Extract text from resume for chat feature
+      try {
+        const resumeBlob = await fs.read(data.resumePath);
+        if (resumeBlob) {
+          const text = await ai.img2txt(resumeBlob);
+          if (text) {
+            setResumeText(text);
+            console.log('📝 Resume text extracted for chat');
+          }
+        }
+      } catch (error) {
+        console.warn('⚠️ Could not extract resume text:', error);
+      }
     }
 
     if (id && kv && fs) {
       loadResume();
     }
-  }, [id, kv, fs]);
+  }, [id, kv, fs, ai]);
  
 
   // Hàm để xử lý gợi ý việc làm từ RapidAPI
@@ -116,21 +134,20 @@ const Resume = () => {
 
       // 3. Dùng AI để chọn top 3 jobs phù hợp nhất
       const prompt = `
-        Bạn là một chuyên gia tuyển dụng AI.
-        Dưới đây là kỹ năng của một ứng viên:
+        You are an AI recruitment specialist.
+        Here are the skills of a candidate:
         ---CV SKILLS---
         ${cvSkills}
         ---
-
-        Đây là danh sách các việc làm thật:
+        Here is a list of real jobs:
         ---JOBS---
         ${JSON.stringify(allJobs.slice(0, 10))}
         ---
+        Based on the candidate's skills, select the 3 most suitable jobs.
+        Return ONE JSON ARRAY containing only the IDs of those 3 jobs.
+        Example: ["job-id-1", "job-id-2", "job-id-3"]
 
-        Dựa trên kỹ năng của ứng viên, hãy chọn 3 công việc phù hợp nhất.
-        Trả về MỘT MẢNG JSON chỉ chứa ID của 3 job đó.
-        Ví dụ: ["job-id-1", "job-id-2", "job-id-3"]
-      `;
+        `;
 
       // 4. Gọi AI
       const response = await ai.chat(prompt);
@@ -161,8 +178,152 @@ const Resume = () => {
     }
   };
 
+  // Handler cho Cover Letter Generator
+  const handleGenerateCoverLetter = async (
+    companyName: string,
+    jobTitle: string,
+    jobDescription: string
+  ): Promise<string> => {
+    if (!feedback) throw new Error('Feedback chưa sẵn sàng');
 
-  // Bắt đầu phần JSX return
+    // Get candidate info from feedback
+    const candidateName = feedback.candidateInfo?.name || '[Your Name]';
+    const candidateEmail = feedback.candidateInfo?.email || '[Your Email]';
+    const candidatePhone = feedback.candidateInfo?.phone || '[Your Phone]';
+    const currentTitle = feedback.candidateInfo?.currentTitle || '';
+
+    // Sử dụng Job Match data nếu có
+    let matchedSkills = '';
+    let missingSkills = '';
+    
+    if (feedback.jobMatch) {
+      // Use detailed job match analysis
+      matchedSkills = feedback.jobMatch.matchingSkills
+        .map(s => `${s.skill} (${s.evidence})`)
+        .join(', ');
+      
+      const criticalMissing = feedback.jobMatch.missingSkills
+        .filter(s => s.importance === 'critical' || s.importance === 'important')
+        .map(s => s.skill)
+        .join(', ');
+      
+      missingSkills = criticalMissing;
+    } else {
+      // Fallback to general skills analysis
+      matchedSkills = feedback.skills.tips
+        .filter(t => t.type === 'good')
+        .map(t => t.tip)
+        .join(', ');
+
+      missingSkills = feedback.skills.tips
+        .filter(t => t.type === 'improve')
+        .map(t => t.tip)
+        .join(', ');
+    }
+
+    const prompt = `
+    You are a professional career coach writing a cover letter.
+
+    Write a professional, compelling cover letter for the following:
+
+    **CANDIDATE INFORMATION:**
+    - Name: ${candidateName}
+    - Email: ${candidateEmail}
+    - Phone: ${candidatePhone}
+    ${currentTitle ? `- Current Role: ${currentTitle}` : ''}
+
+    **POSITION APPLYING FOR:**
+    - Company Name: ${companyName}
+    - Job Title: ${jobTitle}
+    ${jobDescription ? `- Job Description: ${jobDescription}` : ''}
+
+    **CANDIDATE'S QUALIFICATIONS:**
+    ${feedback.matchScore ? `Match Score: ${feedback.matchScore}/100` : ''}
+
+    The candidate has the following strengths based on their CV analysis:
+    ${matchedSkills}
+
+    ${missingSkills ? `Areas the candidate is working to improve:\n${missingSkills}` : ''}
+
+    ${feedback.jobMatch ? `Overall Job Fit: ${feedback.jobMatch.overallAssessment}` : ''}
+
+    Overall CV Score: ${feedback.overallScore}/100
+    ATS Score: ${feedback.ATS.score}/100
+
+    **REQUIREMENTS:**
+    1. **Use proper business letter format:**
+      - Include candidate's contact information at the top
+      - Include date
+      - Include hiring manager address placeholder
+      - Professional greeting (Dear Hiring Manager, or Dear [Company] Team,)
+      - Professional closing (Sincerely, [Candidate Name])
+
+    2. Write in a professional but warm tone
+    3. Highlight the candidate's matching skills prominently with specific examples
+    4. Address areas to improve subtly by showing eagerness to learn and grow
+    5. Show genuine enthusiasm for the role and company
+    6. Keep it concise (250-350 words for the body)
+    7. Make it personal and authentic, not generic
+    8. Reference the candidate's current role if applicable
+
+    **IMPORTANT: Write the cover letter in ENGLISH ONLY.**
+    Even if the company name or job title is in Vietnamese, write the cover letter in English.
+
+    Format the letter properly with:
+    [Candidate Name]
+    [Email] | [Phone]
+
+    [Date]
+
+    [Company Name]
+    [Address - to be filled]
+
+    Dear Hiring Manager,
+
+    [Body paragraphs]
+
+    Sincerely,
+    [Candidate Name]
+    `.trim();
+
+    const response = await ai.chat(prompt);
+    if (!response) throw new Error('AI không trả về phản hồi');
+
+    const content = typeof response.message.content === 'string'
+      ? response.message.content
+      : response.message.content[0]?.text || '';
+
+    return content;
+  };
+
+  // Handler cho Resume Chat
+  const handleChatMessage = async (userMessage: string, context: string): Promise<string> => {
+    const fullPrompt = `
+You are an expert CV/Resume consultant and career advisor.
+
+Context about the resume:
+${context}
+
+${resumeText ? `Resume Full Text:\n${resumeText}\n` : ''}
+
+User Question: ${userMessage}
+
+Please provide a helpful, specific, and actionable answer. If the question is about improving the resume, give concrete suggestions. Be professional but friendly.
+
+**IMPORTANT: Answer in ENGLISH ONLY, regardless of the question's language.**
+Even if the user asks in Vietnamese or another language, respond in English.
+    `.trim();
+
+    const response = await ai.chat(fullPrompt);
+    if (!response) throw new Error('AI không trả về phản hồi');
+
+    const content = typeof response.message.content === 'string'
+      ? response.message.content
+      : response.message.content[0]?.text || '';
+
+    return content;
+  };
+
   return (
      <main className='pt-0!'>
         <nav className='resume-nav'>
@@ -172,12 +333,8 @@ const Resume = () => {
           </Link>
         </nav>
          <div className='flex flex-row w-full max-lg:flex-col-reverse'>
-            {/* Feedback Section */}
             <section className="feedback-section bg-[url('/images/bg-small.svg')] bg-cover min-h-screen p-8 w-full lg:w-2/3">
                 <h2 className='text-4xl font-bold text-gray-800 mb-8'>Resume Analysis</h2>
-
-                {/* === LOGIC ĐIỀU KIỆN CHO NÚT GỢI Ý JOB === */}
-                {/* Chỉ hiển thị nếu đây là CV tổng quát (không có jobTitle) */}
                 {!resumeData?.jobTitle && (
                   <div className="my-8 p-4 bg-white rounded-lg shadow-md border border-gray-200 animate-in fade-in duration-700">
                     <h3 className="text-2xl font-bold text-gray-800 mb-4">Gợi ý Việc làm</h3>
@@ -238,13 +395,44 @@ const Resume = () => {
                     )}
                   </div>
                 )}
-                {/* === KẾT THÚC LOGIC ĐIỀU KIỆN === */}
-
 
                 {feedback ? 
                     <div className="flex flex-col gap-8 animate-in fade-in duration-1000">
+                        {/* Candidate Info Card */}
+                        {feedback.candidateInfo && (
+                          <CandidateInfoCard candidateInfo={feedback.candidateInfo} />
+                        )}
+                        
                         <Summary feedback={feedback}/>
+                        
+                        {/* Job Match Analysis - Show when matching with JD */}
+                        {feedback.jobMatch && resumeData && (
+                          <JobMatchAnalysis
+                            jobMatch={feedback.jobMatch}
+                            matchScore={feedback.matchScore}
+                            jobTitle={resumeData.jobTitle}
+                            companyName={resumeData.companyName}
+                          />
+                        )}
+                        
                         <ATS score={feedback.ATS?.score || 0} suggestions={feedback.ATS?.tips || []}/>
+                        
+                        {/* Cover Letter Generator - Two versions based on analysis type */}
+                        {resumeData && resumeData.jobTitle ? (
+                          /* Match JD: One-click generator with auto-filled data */
+                          <CoverLetterGenerator
+                            feedback={feedback}
+                            resumeData={resumeData}
+                            onGenerate={handleGenerateCoverLetter}
+                          />
+                        ) : (
+                          /* General Analysis: Form-based generator */
+                          <GeneralCoverLetterGenerator
+                            feedback={feedback}
+                            onGenerate={handleGenerateCoverLetter}
+                          />
+                        )}
+                        
                         <Details feedback={feedback}/>
                     </div>
                  : (
@@ -255,17 +443,14 @@ const Resume = () => {
                 )}
             </section>
 
-            {/* Resume Preview Section */}
             <aside className="w-full lg:w-1/3 bg-gray-100 p-8 sticky top-0 h-screen overflow-y-auto">
               
-              {/* === HIỂN THỊ THÔNG TIN JOB NẾU CÓ === */}
               {resumeData?.jobTitle && (
                 <div className='mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg'>
-                  <p className='text-sm font-semibold text-blue-800'>Phân tích so khớp cho Job:</p>
+                  <p className='text-sm font-semibold text-blue-800'>Job Matching Analysis:</p>
                   <p className='text-lg font-bold text-blue-900'>{resumeData.jobTitle}</p>
                 </div>
               )}
-              {/* === KẾT THÚC KHỐI THÔNG TIN === */}
 
               <h3 className="text-2xl font-bold text-gray-800 mb-4">Resume Preview</h3>
               {imageUrl ? (
@@ -280,9 +465,7 @@ const Resume = () => {
                       href={resumeUrl} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="mt-4 w-full inline-block text-center primary-button"
-                    >
-                      <img src="/icons/info.svg" alt="view" className="w-4 h-4 inline mr-2" />
+                      className="mt-4 w-full inline-block text-center primary-button font-bold">
                       View Full PDF
                     </a>
                   )}
@@ -294,6 +477,14 @@ const Resume = () => {
               )}
             </aside>
          </div>
+
+         {feedback && resumeData && (
+           <ResumeChat
+             resumeData={resumeData}
+             feedback={feedback}
+             onSendMessage={handleChatMessage}
+           />
+         )}
      </main>
   )
 }
