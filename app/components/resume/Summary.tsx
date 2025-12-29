@@ -1,6 +1,6 @@
 import React from 'react'
-import ScoreGauge from './ScoreGauge'
-import ScoreBage from './ScoreBage';
+import ScoreGauge from '../ui/ScoreGauge'
+import ScoreBadge from '../ui/ScoreBadge';
 
 
 const Category = ({ title, score }: { title: string, score: number }) => {
@@ -11,7 +11,7 @@ const Category = ({ title, score }: { title: string, score: number }) => {
         <div className={`p-4 ${bgColor} rounded-lg hover:shadow-md transition-all`}>
             <div className='flex items-center justify-between mb-2'>
                 <p className='text-lg font-semibold text-gray-800'>{title}</p>
-                <ScoreBage score={score} />
+                <ScoreBadge score={score} />
             </div>
             <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
               <div 

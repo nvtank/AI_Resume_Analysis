@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import ScoreCircle from './ScoreCricle'
+import ScoreCircle from '../ui/ScoreCircle'
 import { usePuterStore } from '~/lib/puter'
 
 const ResumeCard = ({ resume:{ id, companyName, jobTitle, feedback, imagePath } }: { resume: Resume }) => {
