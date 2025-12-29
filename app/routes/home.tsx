@@ -1,5 +1,5 @@
 import type { Route } from "./+types/Home";
-import ResumeCard from "~/components/ResumeCard";
+import ResumeCard from "~/components/resume/ResumeCard";
 import { usePuterStore } from "~/lib/puter";
 import {  useNavigate } from "react-router";
 import { useEffect, useState } from "react";

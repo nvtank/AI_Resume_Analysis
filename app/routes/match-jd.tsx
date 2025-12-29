@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router';
-import FileUploader from '~/components/FileUploader';
+import FileUploader from '~/components/ui/FileUploader';
 import { prepareInstructions } from '~/constants';
 import { convertPdfToImage } from '~/lib/pdf2img';
 import { usePuterStore } from '~/lib/puter';

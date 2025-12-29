@@ -157,9 +157,8 @@ export default function AdminJobs() {
           paddingBottom: 0,
           duration: 0.4,
           ease: "power2.in",
-          onComplete: async () => {
-            await kv.delete(`job:${jobId}`);
-            loadJobs();
+          onComplete: () => {
+             kv.delete(`job:${jobId}`).then(() => loadJobs());
           }
         });
       } else {
@@ -333,7 +332,7 @@ export default function AdminJobs() {
                   <div
                     key={job.id}
                     id={`job-${job.id}`}
-                    ref={(el) => el && animateJobItem(el)}
+                    ref={(el: HTMLDivElement | null) => { if (el) animateJobItem(el); }}
                     className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all duration-300 group"
                   >
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
