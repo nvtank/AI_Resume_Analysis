@@ -9,7 +9,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 import { usePuterStore } from "./lib/puter";
 import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
@@ -28,7 +28,7 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const { init} = usePuterStore();
+  const init = usePuterStore((state) => state.init);
 
   useEffect(() => {
     init()

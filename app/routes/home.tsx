@@ -1,4 +1,4 @@
-import type { Route } from "./+types/Home";
+import type { Route } from "./+types/home";
 import ResumeCard from "~/components/resume/ResumeCard";
 import { usePuterStore } from "~/lib/puter";
 import {  useNavigate } from "react-router";
@@ -116,7 +116,7 @@ export default function Home() {
               <h3 className="text-2xl font-bold text-gray-800 mb-3">No Resumes Yet</h3>
               <p className="text-gray-600 mb-6">Start analyzing your resumes to see them here</p>
               <button 
-                onClick={() => navigate('/upload')}
+                onClick={() => navigate('/match-jd')}
                 className="primary-button"
               >
                 Upload Your First Resume

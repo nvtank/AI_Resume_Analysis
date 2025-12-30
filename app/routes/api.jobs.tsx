@@ -4,7 +4,7 @@ import { fetchJobsFromRapidAPI } from '~/lib/jobs-api';
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
-  const query = url.searchParams.get('query') || 'software developer';
+  const query = url.searchParams.get('query') || '';
   const numPages = parseInt(url.searchParams.get('pages') || '1', 10);
 
   try {

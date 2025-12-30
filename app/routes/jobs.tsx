@@ -15,9 +15,9 @@ const JobsPage: React.FC = () => {
   const { auth, isLoading } = usePuterStore();
   const navigate = useNavigate();
   const [jobs, setJobs] = useState<ExternalJob[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('software developer');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (!isLoading && !auth.isAuthenticated) {
@@ -39,7 +39,7 @@ const JobsPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (auth.isAuthenticated) {
+    if (auth.isAuthenticated && searchQuery) {
       loadJobs(searchQuery);
     }
   }, [auth.isAuthenticated]);
@@ -99,7 +99,9 @@ const JobsPage: React.FC = () => {
 
         {!loading && !error && jobs.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-600">No job listings found. Try searching with different keywords.</p>
+            <p className="text-gray-600">
+              {searchQuery ? "No job listings found. Try searching with different keywords." : "Enter a keyword to search for jobs."}
+            </p>
           </div>
         )}
 
