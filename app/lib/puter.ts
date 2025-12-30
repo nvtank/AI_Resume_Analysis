@@ -100,7 +100,7 @@ interface PuterStore {
 const getPuter = (): typeof window.puter | null =>
   typeof window !== "undefined" && window.puter ? window.puter : null;
 
-export const usePuterStore = create<PuterStore>((set, get) => {
+export const usePuterStore = create<PuterStore>()((set, get) => {
   const setError = (msg: string) => {
     set({
       error: msg,
@@ -153,7 +153,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             checkAuthStatus: get().auth.checkAuthStatus,
             getUser: () => user,
           },
-          isAdmin: isAdmin, 
+          isAdmin: isAdmin,
           isLoading: false,
         });
         return true;
@@ -178,7 +178,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
         err instanceof Error ? err.message : "Failed to check auth status";
       setError(msg);
       // Đảm bảo reset khi lỗi
-      set(state => ({ ...state, isAdmin: false, isLoading: false })); 
+      set(state => ({ ...state, isAdmin: false, isLoading: false }));
       return false;
     }
   };
