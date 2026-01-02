@@ -125,7 +125,7 @@ const AnalyzeCV = () => {
           <button
             type="submit"
             className="w-full py-4 bg-black text-white rounded-xl font-semibold text-lg
-            hover:bg-gray-900 transition active:scale-[0.98]"
+            hover:bg-gray-900 transition cursor-pointer active:scale-[0.98]"
           >
             Analyze My CV
           </button>
