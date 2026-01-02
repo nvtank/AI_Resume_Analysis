@@ -9,27 +9,9 @@ An intelligent AI-powered resume analysis platform that helps job seekers optimi
 
 ## ✨ Features
 
-### 🤖 AI-Powered Analysis
 - **Resume Analysis**: Get comprehensive feedback on your CV including ATS compatibility, formatting, content quality, and suggestions for improvement
 - **Job Description Matching**: Match your resume against specific job descriptions to see how well you fit the role
 - **Claude AI Integration**: Powered by Claude 3.7 Sonnet for intelligent and context-aware analysis
-
-### 📊 Detailed Insights
-- **ATS Score**: Check how well your resume performs with Applicant Tracking Systems
-- **Match Percentage**: See how well your skills align with job requirements
-- **Keyword Analysis**: Identify missing keywords and skills
-- **Section-by-Section Feedback**: Get specific recommendations for each resume section
-
-### � User Management
-- **Authentication**: Secure login via Puter.js authentication
-- **Resume History**: Track all your analyzed resumes
-- **Admin Dashboard**: Manage job postings and user roles (admin only)
-
-### 🎨 Modern UI/UX
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Smooth Animations**: Built with GSAP for fluid transitions
-- **Intuitive Interface**: Clean and user-friendly design
-- **PDF Upload**: Easy drag-and-drop resume upload
 
 ## 🚀 Getting Started
 
@@ -123,71 +105,6 @@ AI_Resume_Analysis/
 - **Claude AI (3.7 Sonnet)**: Advanced language model for resume analysis
 
 ## 📖 Usage Guide
-
-### For Job Seekers
-
-1. **Sign In**: Click "Login" and authenticate with Puter.js
-2. **Choose Analysis Type**:
-   - **Analyze CV**: Get general feedback on your resume
-   - **Match JD**: Compare your resume against a specific job description
-3. **Upload Resume**: Drag and drop your PDF resume
-4. **Get Results**: View detailed analysis, scores, and recommendations
-5. **Improve**: Follow suggestions to optimize your resume
-
-### For Admins
-
-1. **Get Admin Access**: Visit `/admin/make-admin` to grant yourself admin privileges
-2. **Manage Jobs**: Access `/admin/jobs` to add, edit, or remove job postings
-3. **View Analytics**: Monitor platform usage and user activity
-
-## 🐳 Docker Deployment
-
-Build the Docker image:
-
-```bash
-docker build -t ai-resume-analysis .
-```
-
-Run the container:
-
-```bash
-docker run -p 3000:3000 ai-resume-analysis
-```
-
-### Deploy to Cloud Platforms
-
-This application can be deployed to:
-- **AWS ECS / EC2**
-- **Google Cloud Run**
-- **Azure Container Apps**
-- **Digital Ocean App Platform**
-- **Fly.io**
-- **Railway**
-- **Vercel** (with Node.js runtime)
-
-## 🔑 Key Features Explained
-
-### ATS Compatibility Check
-The system analyzes your resume for:
-- Font usage and readability
-- Section organization
-- Keyword optimization
-- File format compatibility
-- Length and conciseness
-
-### Job Matching Algorithm
-Compares your resume against job descriptions by:
-- Extracting required skills and qualifications
-- Matching your experience with job requirements
-- Identifying skill gaps
-- Providing improvement suggestions
-
-### AI-Powered Recommendations
-Claude AI provides:
-- Specific, actionable feedback
-- Industry best practices
-- Personalized suggestions based on your field
-- Examples of strong bullet points
 
 ## 🤝 Contributing
 
