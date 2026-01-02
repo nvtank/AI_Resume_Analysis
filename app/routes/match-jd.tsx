@@ -90,7 +90,7 @@ const MatchJD = () => {
   return (
   <main className="min-h-screen bg-gradient-to-b from-white to-gray-50">
     
-    <section className="max-w-4xl mx-auto px-6 py-20">
+    <section className="max-w-4xl mx-auto px-6 py-20 h-full">
 
       <div className="text-center mb-16">
         <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">
@@ -121,13 +121,13 @@ const MatchJD = () => {
         <form
           id="upload-form"
           onSubmit={handleSubmit}
-          className="bg-white/70 backdrop-blur-lg border border-gray-200 shadow-lg rounded-3xl p-10 space-y-8"
+          className="bg-white/70 backdrop-blur-lg border border-gray-200 shadow-lg rounded-3xl p-10 space-y-3"
         >
 
           <div className='w-full'>
             <label
               htmlFor="company-name"
-              className="block font-medium text-gray-800 mb-1"
+              className="block font-medium text-gray-800 pb-1"
             >
               Company Name
             </label>
@@ -144,7 +144,7 @@ const MatchJD = () => {
           <div className='w-full'>
             <label
               htmlFor="job-title"
-              className="block font-medium text-gray-800 mb-1"
+              className="block font-medium text-gray-800 pb-1"
             >
               Job Title
             </label>
@@ -161,7 +161,7 @@ const MatchJD = () => {
           <div className='w-full'>
             <label
               htmlFor="job-description"
-              className="block font-medium text-gray-800 mb-1"
+              className="block font-medium text-gray-800 pb-2"
             >
               Job Description
             </label>
@@ -189,7 +189,7 @@ const MatchJD = () => {
           <button
             type="submit"
             className="w-full py-4 bg-black text-white rounded-xl font-semibold text-lg
-            hover:bg-gray-900 transition active:scale-[0.98]"
+            hover:bg-gray-900 transition cursor-pointer active:scale-[0.98]"
           >
             Analyze Resume
           </button>

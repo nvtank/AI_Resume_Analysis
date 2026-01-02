@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
@@ -20,10 +21,6 @@ export const links: Route.LinksFunction = () => [
     rel: "preconnect",
     href: "https://fonts.gstatic.com",
     crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
 ];
 
@@ -53,13 +50,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const location = useLocation();
+  const isAuthPage = location.pathname === "/auth";
+
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-1 mt-18">
+      {!isAuthPage && <Navbar />}
+      <main className={`flex-1 ${!isAuthPage ? "mt-16" : "mt-0"}`}>
         <Outlet />
       </main>
-      <Footer />
+      {!isAuthPage && <Footer />}
     </div>
   );
 }
@@ -81,7 +81,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
+    <main className="container mx-auto">
       <h1>{message}</h1>
       <p>{details}</p>
       {stack && (

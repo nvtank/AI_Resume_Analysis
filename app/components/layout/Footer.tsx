@@ -1,159 +1,144 @@
-import React from 'react';
-import { Link } from 'react-router';
+import React, { useEffect, useRef } from "react";
+import { Link } from "react-router";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  FaGithub,
+  FaTwitter,
+  FaLinkedin,
+  FaArrowRight,
+} from "react-icons/fa6";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const footerRef = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const titleContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.set(footerRef.current, { yPercent: 0 });
+      gsap.set(contentRef.current, { y: 100, opacity: 0 });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: "top bottom", 
+          end: "bottom bottom",
+          scrub: 3,
+        },
+      });
+
+      tl.to(contentRef.current, {
+        y: 0,
+        opacity: 1,
+        ease: "power2.out",
+      });
+
+      // 2. Title Animation (Slide Up Text)
+      const title = titleContainerRef.current?.querySelector("h1");
+      if (title) {
+          gsap.fromTo(title, 
+            { yPercent: 100, rotateX: -20, opacity: 0 },
+            { 
+                yPercent: 0, 
+                rotateX: 0, 
+                opacity: 1, 
+                duration: 2, 
+                ease: "power4.out",
+                scrollTrigger: {
+                    trigger: footerRef.current,
+                    start: "top 80%",
+                }
+            }
+          );
+      }
+
+    }, footerRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <footer className="w-full bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white mt-auto">
-      <div className="container mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          <div className="space-y-4">
-            <Link to="/" className="inline-block group">
-              <p className="text-3xl font-extrabold   text-white">
-                RESUMIND
-              </p>
-            </Link>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
-              AI-powered resume analysis tool to help you land your dream job.
-            </p>
-            
-            {/* Social Links */}
-            <div className="flex gap-3 pt-2">
-              <a
-                href="https://github.com/nvtank/AI_Resume_Analysis"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-gray-700 hover:bg-purple-600 transition-all duration-300 hover:scale-110"
-                aria-label="GitHub"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                </svg>
-              </a>
-            </div>
-          </div>
+    <footer
+      ref={footerRef}
+      className="w-full bg-black text-white overflow-hidden relative min-h-[50vh] flex flex-col justify-end rounded-t-[100px] mt-12"
+    >
+      <div 
+        ref={contentRef}
+        className="container mx-auto px-6 py-20 relative z-10"
+      >
+        {/* Giant Title Section */}
+        <div className="border-b border-white/20 pb-12 mb-16">
+             <div ref={titleContainerRef} className="overflow-hidden">
+                <h1 className="text-[12vw] font-bold !text-white opacity-90 select-none">
+                    RESUMIND
+                </h1>
+             </div>
+             <div className="flex flex-col md:flex-row justify-between items-end mt-8 gap-8">
+                 <p className="text-xl md:text-2xl !text-gray-400 font-light max-w-xl">
+                    Crafting the future of career searching with precision AI analysis.
+                 </p>
+             </div>
+        </div>
 
-          {/* Quick Links */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white">Quick Links</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link 
-                  to="/" 
-                  className="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2 group"
-                >
-                  <span className="w-1 h-1 rounded-full bg-gray-400 group-hover:bg-purple-400 transition-colors"></span>
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/match-jd" 
-                  className="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2 group"
-                >
-                  <span className="w-1 h-1 rounded-full bg-gray-400 group-hover:bg-purple-400 transition-colors"></span>
-                  Match Job Description
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/analyze-cv" 
-                  className="text-gray-400 hover:text-blue-400 transition-colors text-sm flex items-center gap-2 group"
-                >
-                  <span className="w-1 h-1 rounded-full bg-gray-400 group-hover:bg-blue-400 transition-colors"></span>
-                  Analyze Resume
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/auth" 
-                  className="text-gray-400 hover:text-blue-400 transition-colors text-sm flex items-center gap-2 group"
-                >
-                  <span className="w-1 h-1 rounded-full bg-gray-400 group-hover:bg-blue-400 transition-colors"></span>
-                  Sign In
-                </Link>
-              </li>
-            </ul>
-          </div>
+        {/* Links Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 text-sm md:text-base">
+           <div className="space-y-6">
+               <h4 className="text-gray-500 font-medium mb-4">PLATFORM</h4>
+               <ul className="space-y-3">
+                   <li><Link to="/analyze-cv" className="hover:text-gray-300 transition-colors block py-1">Resume Analysis</Link></li>
+                   <li><Link to="/match-jd" className="hover:text-gray-300 transition-colors block py-1">Job Match</Link></li>
+               </ul>
+           </div>
 
-          {/* Contact & Info */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white">Get in Touch</h3>
-            <ul className="space-y-3">
-              <li>
-                <a 
-                  href="mailto:support@resumind.com"
-                  className="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2 group"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  nvtankwork@gmail.com
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="https://github.com/nvtank/AI_Resume_Analysis/issues"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-purple-400 transition-colors text-sm flex items-center gap-2 group"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                  Report an Issue
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="https://github.com/nvtank/AI_Resume_Analysis#readme"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-blue-400 transition-colors text-sm flex items-center gap-2 group"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                  Documentation
-                </a>
-              </li>
-            </ul>
-          </div>
+           <div className="space-y-6">
+               <h4 className="text-gray-500 font-medium mb-4">COMPANY</h4>
+               <ul className="space-y-3">
+                   <li><Link to="/about" className="hover:text-gray-300 transition-colors block py-1">Our Story</Link></li>
+                   <li><Link to="/careers" className="hover:text-gray-300 transition-colors block py-1">Careers</Link></li>
+                   <li><Link to="/contact" className="hover:text-gray-300 transition-colors block py-1">Contact</Link></li>
+               </ul>
+           </div>
+
+           <div className="space-y-6">
+               <h4 className="text-gray-500 font-medium mb-4">LEGAL</h4>
+               <ul className="space-y-3">
+                   <li><Link to="/privacy" className="hover:text-gray-300 transition-colors block py-1">Privacy Policy</Link></li>
+                   <li><Link to="/terms" className="hover:text-gray-300 transition-colors block py-1">Terms of Service</Link></li>
+               </ul>
+           </div>
+           
+           <div className="space-y-6">
+               <h4 className="text-gray-500 font-medium mb-4">FOLLOW US</h4>
+               <div className="flex gap-4">
+                  {[
+                      { icon: <FaGithub />, link: "https://github.com/nvtank/AI_Resume_Analysis" },
+                      { icon: <FaTwitter />, link: "https://twitter.com" },
+                      { icon: <FaLinkedin />, link: "https://linkedin.com" }
+                  ].map((social, idx) => (
+                      <a 
+                        key={idx}
+                        href={social.link}
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300"
+                      >
+                          {social.icon}
+                      </a>
+                  ))}
+               </div>
+           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-gray-700">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-400 text-sm">
-              © {currentYear} RESUMIND. Built with ❤️ by nvtank
-            </p>
-            <div className="flex items-center gap-6 text-sm">
-              <Link 
-                to="/auth"
-                className="text-gray-400 hover:text-purple-400 transition-colors"
-              >
-                Privacy
-              </Link>
-              <Link 
-                to="/auth"
-                className="text-gray-400 hover:text-purple-400 transition-colors"
-              >
-                Terms
-              </Link>
-              <a 
-                href="https://github.com/nvtank/AI_Resume_Analysis"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-purple-400 transition-colors flex items-center gap-1"
-              >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                </svg>
-                Star on GitHub
-              </a>
-            </div>
-          </div>
+        <div className="pt-20 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500 uppercase tracking-wider">
+            <p>© {currentYear} Resumind Inc.</p>
+            <p>Designed by nvtank</p>
         </div>
       </div>
     </footer>
@@ -161,3 +146,5 @@ const Footer = () => {
 };
 
 export default Footer;
+
+
