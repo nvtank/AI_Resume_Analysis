@@ -50,7 +50,6 @@ const AccordionSection = ({
         className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-all rounded-lg"
       >
         <div className="flex items-center gap-3">
-          <img src={icon} alt={title} className="w-8 h-8" />
           <h3 className="text-xl font-bold text-gray-800">{title}</h3>
         </div>
         <div className="flex items-center gap-4">

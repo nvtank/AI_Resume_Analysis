@@ -21,6 +21,7 @@ export const useResumeData = (id: string | undefined) => {
             try {
                 console.log('📖 Loading resume with ID:', id);
 
+                let resumeBlob: Blob | null = null;
                 const resume = await kv.get(`resume-${id}`);
                 console.log('📦 Resume data from KV:', resume);
 
@@ -38,7 +39,10 @@ export const useResumeData = (id: string | undefined) => {
                 setResumeData(data);
                 setFeedback(data.feedback);
 
-                const resumeBlob = await fs.read(data.resumePath);
+                setResumeData(data);
+                setFeedback(data.feedback);
+
+                resumeBlob = (await fs.read(data.resumePath)) || null;
                 if (!resumeBlob) {
                     console.warn('⚠️ Resume blob not found');
                 } else {
@@ -57,26 +61,28 @@ export const useResumeData = (id: string | undefined) => {
                     console.log('🖼️ Image URL created:', url);
                 }
 
-                // Extract text from resume for chat feature
-                try {
-                    // Re-read blob if needed or reuse if possible (fs.read likely returns new blob)
-                    // Since we already read it above, we could optimize, but fs.read is simple enough
-                    if (resumeBlob) {
-                        const text = await ai.img2txt(resumeBlob);
-                        if (text) {
-                            setResumeText(text);
-                            console.log('📝 Resume text extracted for chat');
-                        }
-                    }
-                } catch (err) {
-                    console.warn('⚠️ Could not extract resume text:', err);
-                }
-
             } catch (err) {
                 console.error('Error loading resume:', err);
                 setError((err as Error).message);
             } finally {
+                // IMPORTANT: Stop loading state HERE, before starting the heavy text extraction
                 setIsLoading(false);
+            }
+
+            // Background Task: Extract text for chat (Non-blocking)
+            if (resumeBlob) {
+                try {
+                    // Adding a small delay to ensure UI renders first
+                    // await new Promise(resolve => setTimeout(resolve, 100));
+
+                    const text = await ai.img2txt(resumeBlob);
+                    if (text) {
+                        setResumeText(text);
+                        console.log('📝 Resume text extracted for chat (Background)');
+                    }
+                } catch (err) {
+                    console.warn('⚠️ Could not extract resume text (Background):', err);
+                }
             }
         }
 

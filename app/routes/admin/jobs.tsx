@@ -210,10 +210,10 @@ export default function AdminJobs() {
 
   return (
     <main ref={pageRef} className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <section className="main-section pt-24 pb-16">
+      <section className="main-section pt-16 md:pt-24 pb-10 md:pb-16">
         <div className="container mx-auto px-4 max-w-6xl">
           {/* Page Header */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <h1
               ref={titleRef}
               className="text-4xl md:text-5xl font-bol bg-clip-text text-transparent mb-4"
@@ -227,7 +227,7 @@ export default function AdminJobs() {
 
           <div 
             ref={formRef}
-            className="bg-white w-full  rounded-2xl shadow-xl border border-gray-200 p-8 mb-12"
+            className="bg-white w-full rounded-2xl shadow-xl border border-gray-200 p-6 md:p-8 mb-8 md:mb-12"
           >
             <h2
               ref={formTitleRef}
@@ -238,7 +238,7 @@ export default function AdminJobs() {
             </h2>
             
             <form onSubmit={handleSubmit} className="space-y-6 ">
-              <div className="flex w-full gap-10">
+              <div className="flex flex-col md:flex-row w-full gap-6 md:gap-10">
                 <div className="space-y-2">
                   <label htmlFor="company-name" className="block text-sm font-semibold text-gray-700">
                     Company Name *

@@ -4,7 +4,7 @@ import FileUploader from '~/components/ui/FileUploader';
 import { prepareInstructions } from '~/constants';
 import { convertPdfToImage } from '~/lib/pdf2img';
 import { usePuterStore } from '~/lib/puter';
-import { generateUUID } from '~/lib/utils';
+import { generateUUID, parseAIResponse } from '~/lib/utils';
 const FileUploaderTyped = FileUploader as React.ComponentType<{
   onFileSelect: (file: File | null) => void
 }>;
@@ -41,7 +41,15 @@ const MatchJD = () => {
     setStatusText('Generating feedback...');
 
     const uuid = generateUUID();
-    const data = {
+    const data: {
+        id: string;
+        resumePath: string;
+        imagePath: string;
+        companyName: string;
+        jobTitle: string;
+        jobDescription: string;
+        feedback: any;
+    } = {
         id: uuid,
         resumePath: uploaderFile.path,
         imagePath: uploaderImage.path,
@@ -62,7 +70,13 @@ const MatchJD = () => {
 
     const feedbackText = typeof feedback.message.content === 'string' ? feedback.message.content : feedback.message.content[0]?.text || '';
 
-    data.feedback = JSON.parse(feedbackText);
+    const parsedFeedback = parseAIResponse(feedbackText);
+    if (!parsedFeedback) {
+        console.error("Original feedback text:", feedbackText);
+        return setStatusText('Failed to parse AI feedback.');
+    }
+
+    data.feedback = parsedFeedback;
     await kv.set(`resume-${uuid}`, JSON.stringify(data));
 
     setStatusText('Redirecting to results page...');
@@ -90,7 +104,7 @@ const MatchJD = () => {
   return (
   <main className="min-h-screen bg-gradient-to-b from-white to-gray-50">
     
-    <section className="max-w-4xl mx-auto px-6 py-20 h-full">
+    <section className="max-w-4xl mx-auto px-4 md:px-6 py-10 md:py-20 h-full">
 
       <div className="text-center mb-16">
         <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">
@@ -102,7 +116,7 @@ const MatchJD = () => {
       </div>
 
       {isProcessing ? (
-        <div className="bg-white/70 backdrop-blur-xl border border-gray-200 shadow-lg rounded-3xl p-12 text-center space-y-6">
+        <div className="bg-white/70 backdrop-blur-xl border border-gray-200 shadow-lg rounded-3xl p-8 md:p-12 text-center space-y-6">
           <h2 className="text-2xl font-semibold text-gray-800">
             {statusText}
           </h2>
@@ -121,7 +135,7 @@ const MatchJD = () => {
         <form
           id="upload-form"
           onSubmit={handleSubmit}
-          className="bg-white/70 backdrop-blur-lg border border-gray-200 shadow-lg rounded-3xl p-10 space-y-3"
+          className="bg-white/70 backdrop-blur-lg border border-gray-200 shadow-lg rounded-3xl p-6 md:p-10 space-y-3"
         >
 
           <div className='w-full'>

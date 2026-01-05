@@ -82,7 +82,7 @@ export default function Home() {
   return (
     <main className="min-h-screen mb-12 bg-[var(--color-bg-primary)]">
       <section className="main-section">
-        <div className="page-heading py-16">
+        <div className="page-heading py-10 md:py-16 px-4 md:px-0">
           <h1 className="animate-fade-in text-[var(--color-text-primary)] mb-4">
             Welcome to Resumind
           </h1>
@@ -91,8 +91,8 @@ export default function Home() {
           </h2>
 
           {!loadingResume && resumes.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 w-full max-w-4xl animate-fade-in">
-              <div className="bg-white rounded-2xl p-8 shadow-sm border border-[var(--color-border)] flex flex-col items-center justify-center gap-2 hover:shadow-md transition-shadow">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-8 w-full max-w-4xl animate-fade-in">
+              <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-[var(--color-border)] flex flex-col items-center justify-center gap-2 hover:shadow-md transition-shadow">
                 <div className="text-[var(--color-text-secondary)] text-sm font-medium uppercase tracking-wider">
                   Total Resumes
                 </div>
@@ -100,7 +100,7 @@ export default function Home() {
                   {resumes.length}
                 </div>
               </div>
-              <div className="bg-white rounded-2xl p-8 shadow-sm border border-[var(--color-border)] flex flex-col items-center justify-center gap-2 hover:shadow-md transition-shadow">
+              <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-[var(--color-border)] flex flex-col items-center justify-center gap-2 hover:shadow-md transition-shadow">
                 <div className="text-[var(--color-text-secondary)] text-sm font-medium uppercase tracking-wider">
                   Average Score
                 </div>
@@ -111,7 +111,7 @@ export default function Home() {
                   </span>
                 </div>
               </div>
-              <div className="bg-white rounded-2xl p-8 shadow-sm border border-[var(--color-border)] flex flex-col items-center justify-center gap-2 hover:shadow-md transition-shadow">
+              <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-[var(--color-border)] flex flex-col items-center justify-center gap-2 hover:shadow-md transition-shadow">
                 <div className="text-[var(--color-text-secondary)] text-sm font-medium uppercase tracking-wider">
                   Best Score
                 </div>
@@ -137,8 +137,8 @@ export default function Home() {
         )}
 
         {!loadingResume && resumes.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-20 animate-fade-in w-full">
-            <div className="bg-white rounded-3xl p-16 shadow-lg border border-[var(--color-border)] text-center max-w-lg">
+          <div className="flex flex-col items-center justify-center py-10 md:py-20 animate-fade-in w-full px-4">
+            <div className="bg-white rounded-3xl p-8 md:p-16 shadow-lg border border-[var(--color-border)] text-center max-w-lg w-full">
               <div className="w-20 h-20 mx-auto mb-8 bg-[var(--color-bg-secondary)] rounded-full flex items-center justify-center">
                 <FaPlus className="w-8 h-8 text-[var(--color-text-secondary)]" />
               </div>

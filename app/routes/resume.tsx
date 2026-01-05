@@ -112,8 +112,9 @@ const Resume = () => {
             <span className='text-gray-800 text-sm font-semibold'>Back to homepage</span>
           </Link>
         </nav>
-         <div className='flex flex-row w-full max-lg:flex-col-reverse'>
-            <section className="feedback-section bg-[url('/images/bg-small.svg')] bg-cover min-h-screen p-8 w-full lg:w-2/3">
+         {/* Mobile: Column Reverse (Preview on Top), Desktop: Row (Analysis Left, Preview Right) */}
+         <div className='flex w-full flex-col-reverse lg:flex-row'>
+            <section className="feedback-section bg-[url('/images/bg-small.svg')] bg-cover min-h-screen p-4 md:p-8 w-full lg:w-2/3">
                 <h2 className='text-4xl font-bold text-gray-800 mb-8'>Resume Analysis</h2>
                 {!resumeData?.jobTitle && (
                   <div className="my-8 p-4 bg-white rounded-lg shadow-md border border-gray-200 animate-in fade-in duration-700">
@@ -218,7 +219,8 @@ const Resume = () => {
                 )}
             </section>
 
-            <aside className="w-full lg:w-1/3 bg-gray-100 p-8 sticky top-0 h-screen overflow-y-auto">
+            {/* Sidebar: Sticky on Desktop, Normal flow on Mobile */}
+            <aside className="w-full lg:w-1/3 bg-gray-100 p-4 md:p-8 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto border-b lg:border-b-0 lg:border-l border-gray-200">
               
               {resumeData?.jobTitle && (
                 <div className='mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg'>
@@ -233,7 +235,7 @@ const Resume = () => {
                   <img 
                     src={imageUrl}
                     alt="resume preview"
-                    className="w-full h-auto object-contain rounded-lg shadow-lg"
+                    className="w-full h-auto max-h-[500px] lg:max-h-none object-contain rounded-lg shadow-lg bg-white"
                   />
                   {resumeUrl && (
                     <a 
