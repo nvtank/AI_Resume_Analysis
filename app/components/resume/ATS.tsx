@@ -36,7 +36,6 @@ const ATS = ({ score, suggestions }: ATSProps) => {
     <div className="feedback-card animate-in fade-in duration-500">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <img src={status.icon} alt="ATS Status" className="w-10 h-10" />
           <div>
             <h3 className="text-2xl font-bold text-gray-800">ATS Compatibility</h3>
             <p className="text-sm text-gray-500">Applicant Tracking System Score</p>

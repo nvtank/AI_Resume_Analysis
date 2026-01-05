@@ -93,36 +93,36 @@ export const resumes: Resume[] = [
 
 export const AIResponseFormat = `
       interface Feedback {
-      overallScore: number; // Overall quality score (0-100)
-      matchScore?: number; // Job match score (0-100), ONLY when Job Description is provided
+      overallScore: number; 
+      matchScore?: number;
       candidateInfo?: {
         // ALWAYS extract this information from CV
-        name?: string; // Candidate's full name from CV
-        email?: string; // Email address if visible in CV
-        phone?: string; // Phone number if visible in CV
-        currentTitle?: string; // Current job title if mentioned in CV
+        name?: string; 
+        email?: string; 
+        phone?: string; 
+        currentTitle?: string; 
       };
       ATS: {
-        score: number; //rate based on ATS suitability
+        score: number; 
         tips: {
           type: "good" | "improve";
-          tip: string; //give 3-4 tips
+          tip: string; 
         }[];
       };
       jobMatch?: {
         // ONLY include this section when Job Description is provided
         matchingSkills: {
-          skill: string; // Skill from JD that candidate has
-          evidence: string; // Where in CV this skill is demonstrated
-        }[]; // List ALL matching skills
+          skill: string; 
+          evidence: string; 
+        }[]; 
         missingSkills: {
-          skill: string; // Required skill from JD that candidate lacks
+          skill: string; 
           importance: "critical" | "important" | "nice-to-have";
-          suggestion: string; // How to address this gap
-        }[]; // List ALL missing required skills
+          suggestion: string; 
+        }[]; 
         matchingExperience: {
-          requirement: string; // Experience requirement from JD
-          match: string; // Relevant experience from CV
+          requirement: string; 
+          match: string; 
           matchLevel: "excellent" | "good" | "partial" | "none";
         }[]; // Analyze ALL experience requirements
         overallAssessment: string; // 2-3 sentences summary: Is this a good fit? Why or why not?
@@ -131,33 +131,33 @@ export const AIResponseFormat = `
         score: number;
         tips: {
           type: "good" | "improve";
-          tip: string; //make it a short "title" for the actual explanation
-          explanation: string; //explain in detail here
-        }[]; //give 3-4 tips
+          tip: string; 
+          explanation: string; 
+        }[]; 
       };
       content: {
         score: number;
         tips: {
           type: "good" | "improve";
-          tip: string; //make it a short "title" for the actual explanation
-          explanation: string; //explain in detail here
-        }[]; //give 3-4 tips
+          tip: string; 
+          explanation: string; 
+        }[]; 
       };
       structure: {
         score: number;
         tips: {
           type: "good" | "improve";
-          tip: string; //make it a short "title" for the actual explanation
-          explanation: string; //explain in detail here
-        }[]; //give 3-4 tips
+          tip: string; 
+          explanation: string; 
+        }[]; 
       };
       skills: {
         score: number;
         tips: {
           type: "good" | "improve";
-          tip: string; //make it a short "title" for the actual explanation
-          explanation: string; //explain in detail here
-        }[]; //give 3-4 tips
+          tip: string; 
+          explanation: string; 
+        }[]; 
       };
     }`;
 
@@ -230,7 +230,7 @@ ${jobDescription}
 Be honest and specific. This analysis will help the candidate understand their fit and improve their chances.`;
 
 
-  export const prepareGeneralInstructions = () =>
+export const prepareGeneralInstructions = () =>
   `You are an expert in resume analysis.
   
   **CRITICAL:**

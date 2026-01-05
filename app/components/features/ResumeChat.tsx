@@ -12,6 +12,29 @@ interface ResumeChatProps {
   onSendMessage: (message: string, context: string) => Promise<string>;
 }
 
+const Typewriter = ({ text }: { text: string }) => {
+  const [displayedText, setDisplayedText] = useState('');
+  
+  useEffect(() => {
+    let index = 0;
+    setDisplayedText(''); // Reset on text change
+    
+    // Faster speed (10ms) for smoother response
+    const timer = setInterval(() => {
+      if (index < text.length) {
+        setDisplayedText((prev) => prev + text.charAt(index));
+        index++;
+      } else {
+        clearInterval(timer);
+      }
+    }, 10);
+
+    return () => clearInterval(timer);
+  }, [text]);
+
+  return <h3 className="text-sm whitespace-pre-wrap leading-relaxed">{displayedText}</h3>;
+};
+
 const ResumeChat: React.FC<ResumeChatProps> = ({ 
   resumeData, 
   feedback, 
@@ -134,7 +157,7 @@ ${feedback.content.tips.map(t => `- [${t.type}] ${t.tip}: ${t.explanation}`).joi
             <div className="flex items-center gap-3">
               <div>
                 <h3 className="font-bold text-lg">CV Assistant</h3>
-                <p className="text-xs text-white/80">Resume Analysis Helper</p>
+                <h3 className="text-xs ">Resume Analysis Helper</h3>
               </div>
             </div>
             <button
@@ -164,10 +187,16 @@ ${feedback.content.tips.map(t => `- [${t.type}] ${t.tip}: ${t.explanation}`).joi
                       : 'bg-white text-gray-800 border border-gray-200 rounded-bl-sm shadow-sm'
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
-                  <p className={`text-xs mt-2 ${msg.role === 'user' ? 'text-blue-100' : 'text-gray-400'}`}>
+                  {/* Only use Typewriter for the LAST message if it is from assistant, AND it is NOT the very first welcome message */}
+                  {msg.role === 'assistant' && idx === messages.length - 1 && idx !== 0 ? (
+                     <Typewriter text={msg.content} />
+                  ) : (
+                     <h3 className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</h3>
+                  )}
+                  
+                  <h3  className={`text-xs mt-2 ${msg.role === 'user' ? 'text-blue-100' : 'text-gray-400'}`}>
                     {msg.timestamp.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
-                  </p>
+                  </h3>
                 </div>
               </div>
             ))}
