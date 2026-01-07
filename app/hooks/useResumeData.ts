@@ -15,13 +15,12 @@ export const useResumeData = (id: string | undefined) => {
         const loadResume = async () => {
             if (!id || !kv || !fs) return;
 
+            let resumeBlob: Blob | null = null;
             setIsLoading(true);
             setError(null);
 
             try {
                 console.log('📖 Loading resume with ID:', id);
-
-                let resumeBlob: Blob | null = null;
                 const resume = await kv.get(`resume-${id}`);
                 console.log('📦 Resume data from KV:', resume);
 
@@ -65,16 +64,12 @@ export const useResumeData = (id: string | undefined) => {
                 console.error('Error loading resume:', err);
                 setError((err as Error).message);
             } finally {
-                // IMPORTANT: Stop loading state HERE, before starting the heavy text extraction
                 setIsLoading(false);
             }
 
             // Background Task: Extract text for chat (Non-blocking)
             if (resumeBlob) {
                 try {
-                    // Adding a small delay to ensure UI renders first
-                    // await new Promise(resolve => setTimeout(resolve, 100));
-
                     const text = await ai.img2txt(resumeBlob);
                     if (text) {
                         setResumeText(text);

@@ -5,7 +5,7 @@ import { usePuterStore } from '~/lib/puter';
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { auth, isLoading } = usePuterStore();
+  const { auth, isLoading, isAdmin } = usePuterStore();
 
   const [isHidden, setIsHidden] = useState(false);
   const lastScrollY = useRef(0);
@@ -49,16 +49,18 @@ const Navbar = () => {
   };
 
   const navLinks = [
-    { name: 'Jobs', path: '/jobs', color: 'green' },
-    { name: 'Match JD', path: '/match-jd', color: 'purple' },
-    { name: 'Analyze CV', path: '/analyze-cv', color: 'blue' },
+    { name: 'Jobs', path: '/jobs', color: 'white' },
+    { name: 'Match JD', path: '/match-jd', color: 'white' },
+    { name: 'Analyze CV', path: '/analyze-cv', color: 'white' },
   ];
+
+
 
   return (
     <>
       <nav
-        className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 
-                  bg-white/90 backdrop-blur-xl shadow-lg rounded-full
+        className={`fixed top-4 left-1/2 bg-black -translate-x-1/2 z-50 
+                  backdrop-blur-xl shadow-lg rounded-full
                   transition-all duration-300 ease-in-out w-[60%] max-w-2xl
                   ${
                     isHidden
@@ -68,10 +70,9 @@ const Navbar = () => {
       >
         <div className="flex items-center justify-between px-6 py-3">
           <Link to="/" className="flex items-center gap-2 group">
-             {/* Logo text - visible on all screens */}
-            <h2 className="text-xl md:text-xl font-extrabold bg-clip-text text-transparent bg-black group-hover:tracking-wide transition-all">
+            <span className="text-xl md:text-xl font-extrabold text-white group-hover:tracking-wide transition-all">
               RESUMIND
-            </h2>
+            </span>
           </Link>
 
           {/* desktop Menu */}
@@ -82,12 +83,12 @@ const Navbar = () => {
                 to={link.path}
                 className={`relative font-semibold px-3 py-2 rounded-lg group transition-all ${
                   isActive(link.path)
-                    ? `text-${link.color}-600`
-                    : `text-gray-700 hover:text-${link.color}-600`
+                    ? `text-black bg-white rounded-[200px]`
+                    : `text-white hover:text-${link.color}-600`
                 }`}
               >
                 {link.name}
-                <span className={`absolute left-0 -bottom-0.5 h-0.5 w-0 bg-${link.color}-600 transition-all duration-300 group-hover:w-full pointer-events-none`}></span>
+                <span className={`absolute left-0 -bottom-0.5 h-0.5 w-0 bg-${link.color} transition-all duration-300 group-hover:w-full pointer-events-none`}></span>
               </Link>
             ))}
 
@@ -106,7 +107,7 @@ const Navbar = () => {
                   </span>
                 </button>
 
-                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl py-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 border border-gray-100">
+                <div className="absolute right-0 top-full mt-0 w-48 bg-white rounded-xl shadow-xl py-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 border border-gray-100">
                   <Link
                     to="/profile"
                     className="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2"
@@ -128,7 +129,6 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <button 
             className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -142,7 +142,6 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-white/95 backdrop-blur-xl pt-24 px-6 animate-in slide-in-from-top-10 duration-200">
            <div className="flex flex-col gap-4">
@@ -151,7 +150,7 @@ const Navbar = () => {
                   key={link.path}
                   to={link.path}
                   className={`text-xl font-bold py-3 border-b border-gray-100 ${
-                    isActive(link.path) ? `text-${link.color}-600` : 'text-gray-800'
+                    isActive(link.path) ? `text-${link.color}-600` : 'text-white'
                   }`}
                 >
                   {link.name}
@@ -169,7 +168,7 @@ const Navbar = () => {
                 <>
                   <Link
                     to="/profile"
-                    className="text-xl font-bold py-3 border-b border-gray-100 text-gray-800"
+                    className="text-xl font-bold py-3 border-b border-gray-100 text-white"
                   >
                     Profile ({auth.user?.username})
                   </Link>

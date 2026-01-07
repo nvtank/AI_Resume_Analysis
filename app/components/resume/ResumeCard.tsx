@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
 import ScoreCircle from "../ui/ScoreCircle";
 import { usePuterStore } from "~/lib/puter";
+import { FaTrash } from "react-icons/fa6";
 
 const ResumeCard = ({
   resume: { id, companyName, jobTitle, feedback, imagePath },
+  onDelete,
 }: {
   resume: Resume;
+  onDelete: (id: string) => void;
 }) => {
   const { fs } = usePuterStore();
   const [resumeUrl, setResumeUrl] = useState<string | null>(null);
@@ -20,6 +23,14 @@ const ResumeCard = ({
     };
     loadResumes();
   }, [imagePath]);
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (confirm("Are you sure you want to delete this resume?")) {
+      onDelete(id);
+    }
+  };
 
   return (
     <Link
@@ -50,8 +61,15 @@ const ResumeCard = ({
           )}
         </div>
 
-        <div className="shrink-0">
+        <div className="shrink-0 flex items-center gap-3">
           <ScoreCircle score={feedback.overallScore} />
+             <button
+            onClick={handleDelete}
+            className="p-2 cursor-pointer text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+            title="Delete Resume"
+          >
+            <FaTrash size={16} />
+          </button>
         </div>
       </div>
 
