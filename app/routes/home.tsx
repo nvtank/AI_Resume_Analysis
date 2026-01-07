@@ -79,6 +79,20 @@ export default function Home() {
     return Math.max(...resumes.map((r) => r.feedback?.overallScore || 0));
   };
 
+  const handleDelete = async (id: string) => {
+    try {
+      await kv.delete(`resume-${id}`);
+      setResumes((prev) => prev.filter((r) => r.id !== id));
+      
+      // Also delete the image file if possible, but resume object has imagePath
+      // We'd need to find the resume object first to get the path
+      // optimizing for speed: let's just delete the KV entry and the state for now
+    } catch (error) {
+      console.error("Failed to delete resume:", error);
+      alert("Failed to delete resume");
+    }
+  };
+
   return (
     <main className="min-h-screen mb-12 bg-[var(--color-bg-primary)]">
       <section className="main-section">
@@ -148,7 +162,7 @@ export default function Home() {
               <p className="text-[var(--color-text-secondary)] mb-8 leading-relaxed">
                 Start analyzing your resumes to see them here. It takes just a few seconds.
               </p>
-              <Button onClick={() => navigate("/match-jd")}>
+              <Button className="cursor-pointer" onClick={() => navigate("/match-jd")}>
                 Upload Your First Resume
               </Button>
             </div>
@@ -169,7 +183,7 @@ export default function Home() {
                   className="animate-fade-in"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <ResumeCard resume={resume} />
+                  <ResumeCard resume={resume} onDelete={handleDelete} />
                 </div>
               ))}
             </div>

@@ -112,28 +112,27 @@ const Resume = () => {
             <span className='text-gray-800 text-sm font-semibold'>Back to homepage</span>
           </Link>
         </nav>
-         {/* Mobile: Column Reverse (Preview on Top), Desktop: Row (Analysis Left, Preview Right) */}
          <div className='flex w-full flex-col-reverse lg:flex-row'>
-            <section className="feedback-section bg-[url('/images/bg-small.svg')] bg-cover min-h-screen p-4 md:p-8 w-full lg:w-2/3">
+            <section className="feedback-section  bg-cover min-h-screen p-4 md:p-8 w-full lg:w-2/3">
                 <h2 className='text-4xl font-bold text-gray-800 mb-8'>Resume Analysis</h2>
                 {!resumeData?.jobTitle && (
                   <div className="my-8 p-4 bg-white rounded-lg shadow-md border border-gray-200 animate-in fade-in duration-700">
-                    <h3 className="text-2xl font-bold text-gray-800 mb-4">Gợi ý Việc làm</h3>
+                    <h3 className="text-2xl font-bold text-gray-800 mb-4">Job suggestions</h3>
                     <button 
                       onClick={handleSuggestJobs} 
                       disabled={isSuggesting || !feedback}
                       className="primary-button disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {isSuggesting ? "Đang tìm kiếm..." : "Tìm việc làm phù hợp"}
+                      {isSuggesting ? "Searching..." : "Find suitable jobs"}
                     </button>
                     
                     {isSuggesting && (
-                      <p className="text-gray-600 mt-4">Đang phân tích CV và Job, vui lòng đợi...</p>
+                      <p className="text-gray-600 mt-4">We are currently analyzing your CV and job application, please wait...</p>
                     )}
 
                     {suggestedJobs.length > 0 && (
                       <div className="mt-4 space-y-3">
-                        <h4 className="font-semibold text-lg">Kết quả phù hợp nhất:</h4>
+                        <h4 className="font-semibold text-lg">The most suitable jobs:</h4>
                         {suggestedJobs.map(job => (
                           <div key={job.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition">
                             <div className="flex justify-between items-start mb-2">
@@ -164,7 +163,7 @@ const Resume = () => {
                                 rel="noopener noreferrer"
                                 className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700"
                               >
-                                Xem chi tiết & Apply
+                                View details & Apply
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                 </svg>
@@ -219,7 +218,7 @@ const Resume = () => {
                 )}
             </section>
 
-            {/* Sidebar: Sticky on Desktop, Normal flow on Mobile */}
+            {/* Sidebar */}
             <aside className="w-full lg:w-1/3 bg-gray-100 p-4 md:p-8 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto border-b lg:border-b-0 lg:border-l border-gray-200">
               
               {resumeData?.jobTitle && (

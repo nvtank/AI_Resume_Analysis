@@ -83,7 +83,7 @@ const GeneralCoverLetterGenerator: React.FC<GeneralCoverLetterGeneratorProps> = 
             onClick={() => setShowForm(true)}
             className="px-6 py-2.5 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-all shadow-md hover:shadow-lg"
           >
-            ✍️ Create Cover Letter
+            Create Cover Letter
           </button>
         )}
       </div>
@@ -130,9 +130,7 @@ const GeneralCoverLetterGenerator: React.FC<GeneralCoverLetterGeneratorProps> = 
               className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition resize-none"
               placeholder="Paste the job description here to create a more targeted cover letter..."
             />
-            <p className="text-xs text-gray-500 mt-1">
-              💡 Tip: Include requirements, responsibilities, and company values for a better match
-            </p>
+
           </div>
 
           <div className="flex gap-3">
@@ -150,7 +148,7 @@ const GeneralCoverLetterGenerator: React.FC<GeneralCoverLetterGeneratorProps> = 
                   Generating...
                 </>
               ) : (
-                '🚀 Generate Cover Letter'
+                ' Generate Cover Letter'
               )}
             </button>
             <button
@@ -220,23 +218,12 @@ const GeneralCoverLetterGenerator: React.FC<GeneralCoverLetterGeneratorProps> = 
             </button>
             <button
               onClick={handleReset}
-              className="px-6 py-2.5 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition"
+              className="px-6 py-2.5 bg-black text-white rounded-lg font-semibold hover:bg-black/80 transition"
             >
-              🔄 Create New
+              Create New
             </button>
           </div>
 
-          {/* Tips after generation */}
-          <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-            <p className="text-sm text-green-800 font-medium mb-2">✅ Next steps:</p>
-            <ul className="text-sm text-green-700 space-y-1 ml-4">
-              <li>• Review and customize the letter to match your voice</li>
-              <li>• Add specific examples from your experience</li>
-              <li>• Include the complete company address before sending</li>
-              <li>• Save as PDF for professional submission</li>
-              <li>• Proofread carefully before attaching to your application</li>
-            </ul>
-          </div>
         </div>
       )}
     </div>
